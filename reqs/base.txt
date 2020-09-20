@@ -1,0 +1,4 @@
+Django==2.2.15
+PyMySQL==0.10.0
+pytz==2020.1
+sqlparse==0.3.1

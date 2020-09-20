@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>검색</title>
+</head>
+<body>
+  <div>
+    <span>{{ book.title }}</span>
+    <span>{{ book.isbn }}</span>
+    <span>{{ book.publisher }}</span>
+    <span>{{ book.authors }}</span>
+    <span>{{ book.date_publish }}</span>
+    <span>{{ book.translators }}</span>
+    <span>{{ book.contents }}</span>
+    <span>{{ book.sell_status }}</span>
+    <span>{{ book.dt_created }}</span>
+    <div>
+      <img src="{{ book.thumbnail }}">
+    </div>
+  </div>
+  <div>ebook links
+    {% for ebook in ebooks %}
+      <div>
+        <a href="{{ ebook.url }}">{{ ebook.book_store }}</a>
+      </div>
+    {% endfor %}
+  </div>
+</body>
+</html>
