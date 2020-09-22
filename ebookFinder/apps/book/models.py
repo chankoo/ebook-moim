@@ -41,12 +41,12 @@ class Book(models.Model):
     )
 
     thumbnail = models.CharField(
-        max_length=300,
+        max_length=500,
         default=''
     )
 
     url = models.CharField(
-        max_length=300,
+        max_length=500,
         default=''
     )
 
@@ -90,7 +90,7 @@ class Ebook(models.Model):
     )
 
     url = models.CharField(
-        max_length=300,
+        max_length=500,
         default=''
     )
 
@@ -106,3 +106,6 @@ class Ebook(models.Model):
     dt_modified = models.DateTimeField(
         auto_now=True
     )
+
+    def __str__(self):
+        return '{}/{}'.format(self.book.title, self.book_store)
