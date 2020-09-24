@@ -13,3 +13,5 @@ DATABASES = {
         }
     }
 }
+
+from ebookFinder import celeryconfig as CELERY_CONFIG

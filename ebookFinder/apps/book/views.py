@@ -3,6 +3,7 @@
 import requests
 import json
 import urllib.parse
+import traceback
 
 from django.views.generic.base import TemplateView, View
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse, Http404
@@ -36,7 +37,9 @@ class MainView(TemplateView):
         query = urllib.parse.urlencode(params)
         api_url = url + "?" + query
 
-        res = requests.get(api_url, headers=headers).json()
+        res = requests.get(api_url, headers=headers)
+        print(res.status_code)
+        res = res.json()
         books_meta = res.get('meta', {})
         books = res.get('documents', [])
         return self.render_to_response(context={
@@ -44,7 +47,7 @@ class MainView(TemplateView):
             'books': books,
         })
 
-import traceback
+
 class BookDetail(TemplateView):
     template_name = 'book/detail.html'
 
@@ -78,18 +81,13 @@ class BookDetail(TemplateView):
             except Exception as e:
                 raise Http404(str(e))
 
-        # try:
-        #     infos = get_ebooks_info(book.isbn)
-        # except Exception as e:
-        #     traceback.print_exc()
-        #     # raise Http404(str(e))
-
         if not book.ebooks.exists():
             infos = get_ebooks_info(book.isbn)
             for info in infos:
                 ebook = Ebook(**info)
                 ebook.book = book
                 ebook.save()
+                save_ebook_raw.apply_async((info['url'], ebook.id), countdown=1)
 
         context = self.get_context_data(**kwargs)
         context['book'] = book
@@ -158,7 +156,7 @@ BOOK_STORES = [
     },
 ]
 
-
+from ebookFinder.apps.book.tasks import save_ebook_raw
 def get_ebooks_info(isbn) -> list:
     if '-' in isbn:
         isbns = isbn.split('-')
@@ -202,7 +200,5 @@ def get_ebooks_info(isbn) -> list:
             info = {}
             info['book_store'] = STORE['name']
             info['url'] = store_url + href if 'http' not in href else href
-            res = requests.get(info['url'], headers=headers)
-            info['raw'] = res.text
             result.append(info)
     return result
