@@ -1,6 +1,6 @@
 import requests
 from ebookFinder.celery import app
-from ebookFinder.apps.book.views import USER_AGENT
+from ebookFinder.apps.book.consts import USER_AGENT
 from ebookFinder.apps.book.models import Ebook
 
 
