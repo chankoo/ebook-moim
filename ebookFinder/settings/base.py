@@ -41,6 +41,10 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # 정적 파일 설정
 STATIC_URL = '/static/'
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+)
 # 정적 파일 설정 끝
 
 # SECURITY WARNING: keep the secret key used in production secret!

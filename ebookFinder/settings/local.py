@@ -14,4 +14,8 @@ DATABASES = {
     }
 }
 
+STATICFILES_DIRS = [
+    os.path.join(DJANGO_ROOT, 'static'),
+]
+
 from ebookFinder import celeryconfig as CELERY_CONFIG

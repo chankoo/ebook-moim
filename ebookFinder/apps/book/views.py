@@ -76,4 +76,9 @@ class BookDetail(TemplateView):
         return self.render_to_response(context=context)
 
     def post(self, request, *args, **kwargs):
-        pass
+        try:
+            result = search_books(request.POST)
+        except Exception as e:
+            result = {}
+            print(e)
+        return self.render_to_response(context=result)
