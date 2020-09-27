@@ -1,0 +1,23 @@
+header {
+  .base-nav {
+    background: $color-indigo100;
+    min-height: 50px;
+
+    .nav-content {
+      width: 1280px;
+      margin: 0 auto;
+      padding: 13px 0;
+
+      a {
+        color: $color-white;
+
+        span {
+          margin: 0 0 0 8px;
+        }
+      }
+    }
+
+    .nav-divider {border-left: 1px solid $color-indigo400;}
+    .gnb-menu {color: $color-white; &:hover {background-color: $color-indigo200;}}
+  }
+}
