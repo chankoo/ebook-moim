@@ -126,7 +126,7 @@
 		"oS": 3,
 		"sct": 0
 		},
-	"/page/book.scss": {
+	"/page/detail.scss": {
 		"aP": 0,
 		"bl": 0,
 		"dP": 10,
@@ -134,7 +134,33 @@
 		"ft": 4,
 		"ma": 0,
 		"oA": 1,
-		"oAP": "/page/book.css",
+		"oAP": "/page/detail.css",
+		"oF": 0,
+		"oS": 0,
+		"sct": 0
+		},
+	"/page/index.scss": {
+		"aP": 0,
+		"bl": 0,
+		"dP": 10,
+		"ec": 1,
+		"ft": 4,
+		"ma": 0,
+		"oA": 1,
+		"oAP": "/page/index.css",
+		"oF": 0,
+		"oS": 0,
+		"sct": 0
+		},
+	"/page/list.scss": {
+		"aP": 0,
+		"bl": 0,
+		"dP": 10,
+		"ec": 1,
+		"ft": 4,
+		"ma": 0,
+		"oA": 1,
+		"oAP": "/page/list.css",
 		"oF": 0,
 		"oS": 0,
 		"sct": 0

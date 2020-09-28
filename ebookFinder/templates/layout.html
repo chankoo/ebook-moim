@@ -12,7 +12,7 @@
               <a href="" class="gnb-menu body-2">GNB2</a>
             </div>
             <div class="searchbox-wrapper">
-              <form method="post">{% csrf_token %}
+              <form method="get" action="/book/list">
                 <div class="form-control">
                   <i class="fas fa-search"></i>
                   <input type="text" name="query"/>
@@ -50,4 +50,10 @@
   </div>
   {% block page_tooltip %}{% endblock %}
   {% block footer_remover %}{% endblock %}
+{% endblock %}
+
+{% block extrascripts %}
+  <script>
+
+  </script>
 {% endblock %}

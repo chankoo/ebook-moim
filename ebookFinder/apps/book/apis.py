@@ -58,6 +58,7 @@ def get_ebooks_info(isbn) -> list:
     }
 
     result = []
+    good = None
     for STORE in BOOK_STORES:
         base = STORE['domain'] + STORE['base']
 
@@ -72,6 +73,9 @@ def get_ebooks_info(isbn) -> list:
             )
             if good:
                 break
+
+        if good is None:
+            raise ValueError('The good not exist!')
         links = good.select('a')
 
         res = None

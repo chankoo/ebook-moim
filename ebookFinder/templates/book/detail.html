@@ -5,11 +5,11 @@
 {% block extrahead %}
 {% endblock extrahead %}
 {% block content_wrapper %}
-  <section class="container-1280">
+  <div class="container-1280">
     <div class="detail-wrap p-0-16">
       <section class="detail-content">
         <div class="content-header">
-          <img class="header-thumnail" src="{{ book.thumbnail }}" height="250">
+          <img class="header-thumnail" src={% if book.thumbnail %}"{{ book.thumbnail }}"{% else %}{% static "img/no-book-img.png" %}{% endif %} height="250">
           <div class="header-info p-0-24">
             <p class="title-2-bold">{{ book.title }}</p>
             <p class="body-2-narrow">{{ book.authors }}<span class="caption-1"> 지음</span>{% if book.translators %} | {{ book.translators }}<span class="caption-1"> 옮김</span>{% endif %}</p>
@@ -25,7 +25,10 @@
           <p class="body-2-narrow"><span class="badge badge-info">업데이트</span> {{ book.dt_created|date:'Y년 m월 d일' }}</p>
           <div class="links-wrapper">
             {% for ebook in ebooks %}
-              <a class="link link-block" href="{{ ebook.url }}">{{ ebook.book_store }}</a>
+              <a class="link link-block" href="{{ ebook.url }}">
+                <img class="item-thumnail" src="{{ book.thumbnail }}" height="100">
+                {{ ebook.book_store }}
+              </a>
             {% endfor %}
           </div>
         </div>
@@ -39,7 +42,7 @@
         hi
       </section>
     </div>
-  </section>
+  </div>
 {% endblock content_wrapper %}
 
 {% block extrascripts %}

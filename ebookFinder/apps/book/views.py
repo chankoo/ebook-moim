@@ -10,23 +10,40 @@ from ebookFinder.apps.book.tasks import save_ebook_raw
 from ebookFinder.apps.book.apis import search_books, get_book_info, get_ebooks_info
 
 
-class MainView(TemplateView):
-    template_name = 'book/main.html'
+class IndexView(TemplateView):
+    template_name = 'book/index.html'
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context=context)
 
-    def post(self, request, *args, **kwargs):
+
+class BookListView(TemplateView):
+    template_name = 'book/list.html'
+
+    def get(self, request, *args, **kwargs):
         try:
-            result = search_books(request.POST)
+            context = {}
+            context['query'] = request.GET.get('query', '')
+            result = search_books(request.GET)
+            context.update(result)
         except Exception as e:
-            result = {}
             print(e)
-        return self.render_to_response(context=result)
+        return self.render_to_response(context=context)
 
 
-class BookDetail(TemplateView):
+class BookListAPIView(TemplateView):
+    """
+    Ajax search의 결과를 보여주기 위한 뷰
+    """
+    template_name = 'book/list.html'
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        return self.render_to_response(context=context)
+
+
+class BookDetailView(TemplateView):
     template_name = 'book/detail.html'
 
     def get(self, request, *args, **kwargs):
@@ -62,7 +79,11 @@ class BookDetail(TemplateView):
 
         if not book.ebooks.exists():
             # Ebook 정보 없을 경우 웹상에서 정보 조회
-            infos = get_ebooks_info(book.isbn)
+            try:
+                infos = get_ebooks_info(book.isbn)
+            except ValueError as e:
+                infos = []
+                print(e)
             for info in infos:
                 ebook = Ebook(**info)
                 ebook.book = book
@@ -74,11 +95,3 @@ class BookDetail(TemplateView):
         context['book'] = book
         context['ebooks'] = book.ebooks.all()
         return self.render_to_response(context=context)
-
-    def post(self, request, *args, **kwargs):
-        try:
-            result = search_books(request.POST)
-        except Exception as e:
-            result = {}
-            print(e)
-        return self.render_to_response(context=result)

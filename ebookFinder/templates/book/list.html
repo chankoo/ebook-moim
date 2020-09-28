@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% load i18n static %}
+{% block title %}전자책 검색{% endblock %}
+{% block body_class %}book-list{% endblock body_class %}
+{% block extrahead %}
+{% endblock extrahead %}
+{% block content_wrapper %}
+  <div class="list-wrap p-0-16 container-1280">
+    <section class="list-meta">
+      '{{ query }}' 검색 결과 | {{ books_meta.total_count }} 건
+    </section>
+    <section class="list-content">
+      <ul style="list-style-type: none;">
+        {% for book in books %}
+          <li >
+            <a class="content-item link link-block" href="/book/{{ book.isbn | slugify }}">
+              <img class="item-thumnail" src={% if book.thumbnail %}"{{ book.thumbnail }}"{% else %}{% static "img/no-book-img.png" %} width="70"{% endif %} height="100">
+              <div class="item-info">
+                <p class="subtitle-2-bold">{{ book.title }}</p>
+                <span class="caption-1">{{ book.authors|join:',' }}{% if book.translators %} | {{ book.translators|join:',' }}{% endif %}</span>
+                <span class="caption-1">| {{ book.publisher }}</span>
+                <span class="caption-1">| {{ book.price }}</span>
+                <span class="caption-1">| {{ book.datetime|slice:":-19" }}</span>
+              </div>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+    <section class="list-side">
+      hi
+    </section>
+  </div>
+{% endblock content_wrapper %}
+
+{% block extrascripts %}
+  {{ block.super }}
+{% endblock %}
