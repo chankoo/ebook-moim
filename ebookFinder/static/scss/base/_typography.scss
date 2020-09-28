@@ -137,6 +137,13 @@
   @extend .body-2;
   @include font-weight-bold;
 }
+.body-2-narrow {
+  @extend .body-2;
+  margin-top: 0;
+  margin-bottom: 1px;
+  line-height: 20px;
+
+}
 
 
 .body-3 {
@@ -162,6 +169,7 @@
   font-size: 12px;
   line-height: 18px;
   font-weight: 400;
+  color: $color-gray500;
 }
 .caption-1-light {
   @extend .caption-1;

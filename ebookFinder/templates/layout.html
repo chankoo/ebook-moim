@@ -4,33 +4,36 @@
   {% block header %}
     <header class="header">
       <section class="base-nav">
-        <div class="container-1280 d-flex">
-          <a class="nav-logo-wrapper" href="/">ebookFinder</a>
-          <div class="left-nav">
-            <a href="" class="gnb-menu body-2">GNB1</a>
-            <a href="" class="gnb-menu body-2">GNB2</a>
-          </div>
-          <div class="searchbox-wrapper">
-            <form method="post">{% csrf_token %}
-              <label>검색
-                <input type="text" name="query"/>
-              </label>
-            </form>
-          </div>
-          <div class="right-nav">
-            <div class="right-nav-list">
-              <a class="right-nav-item" href="#" data-toggle="dropdown">
-                <i class="fas fa-bars"></i>
-              </a>
-              <div class="nav-dropdown">
-                <a tabindex="-1" class="nav-dropdown-item body-2" href=""><i class="fas fa-pen"></i>dropdown1
+        <div class="container-1280 p-16">
+          <nav class="d-flex align-items-center ">
+            <a class="nav-logo-wrapper" href="/">ebookFinder</a>
+            <div class="left-nav">
+              <a href="" class="gnb-menu body-2">GNB1</a>
+              <a href="" class="gnb-menu body-2">GNB2</a>
+            </div>
+            <div class="searchbox-wrapper">
+              <form method="post">{% csrf_token %}
+                <div class="form-control">
+                  <i class="fas fa-search"></i>
+                  <input type="text" name="query"/>
+                </div>
+              </form>
+            </div>
+            <div class="right-nav push">
+              <div class="right-nav-list">
+                <a class="right-nav-item" href="#" data-toggle="dropdown">
+                  <i class="fas fa-bars"></i>
                 </a>
-                <div class="nav-divider"></div>
-                <a tabindex="-1" class="nav-dropdown-item body-2" href=""><i class="fas fa-pen"></i>dropdown2
-                </a>
+                <div class="nav-dropdown hide">
+                  <a tabindex="-1" class="nav-dropdown-item body-2" href=""><i class="fas fa-pen"></i>dropdown1
+                  </a>
+                  <div class="nav-divider"></div>
+                  <a tabindex="-1" class="nav-dropdown-item body-2" href=""><i class="fas fa-pen"></i>dropdown2
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
+          </nav>
         </div>
       </section>
     </header>

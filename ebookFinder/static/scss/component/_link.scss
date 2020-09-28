@@ -1,0 +1,17 @@
+.link {
+  min-height: 50px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: $color-gray10;
+
+  &:hover {
+    background-color: $color-blue300;
+  }
+
+
+}
+
+.link-block {
+  display: block;
+  margin-bottom: 5px;
+}

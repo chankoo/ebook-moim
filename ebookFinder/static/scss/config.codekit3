@@ -61,6 +61,45 @@
 		"oS": 0,
 		"sct": 0
 		},
+	"/component/_etc.scss": {
+		"aP": 0,
+		"bl": 0,
+		"dP": 10,
+		"ec": 1,
+		"ft": 4,
+		"ma": 0,
+		"oA": 1,
+		"oAP": "/component/_etc.css",
+		"oF": 0,
+		"oS": 0,
+		"sct": 0
+		},
+	"/component/_form.scss": {
+		"aP": 0,
+		"bl": 0,
+		"dP": 10,
+		"ec": 1,
+		"ft": 4,
+		"ma": 0,
+		"oA": 1,
+		"oAP": "/component/_form.css",
+		"oF": 0,
+		"oS": 0,
+		"sct": 0
+		},
+	"/component/_link.scss": {
+		"aP": 0,
+		"bl": 0,
+		"dP": 10,
+		"ec": 1,
+		"ft": 4,
+		"ma": 0,
+		"oA": 1,
+		"oAP": "/component/_link.css",
+		"oF": 0,
+		"oS": 0,
+		"sct": 0
+		},
 	"/layout/header.scss": {
 		"aP": 0,
 		"bl": 0,

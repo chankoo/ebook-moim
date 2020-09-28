@@ -5,33 +5,41 @@
 {% block extrahead %}
 {% endblock extrahead %}
 {% block content_wrapper %}
-
-  <div>
-    <section class="container-1280">
-      <div>{{ book.title }}</div>
-      <div>{{ book.isbn }}</div>
-      <div>{{ book.publisher }}</div>
-      <div>{{ book.authors }}</div>
-      <div>{{ book.date_publish }}</div>
-      <div>{{ book.translators }}</div>
-      <div>{{ book.contents }}</div>
-      <div>{{ book.sell_status }}</div>
-      <div>{{ book.dt_created }}</div>
-      <div>
-        <img src="{{ book.thumbnail }}">
-      </div>
-    </section>
-  </div>
-  <div class="container-1280">
-    <section>
-      <div> ebook links</div>
-      <div>
-      {% for ebook in ebooks %}
-        <a href="{{ ebook.url }}">{{ ebook.book_store }}</a>
-      {% endfor %}
-      </div>
-    </section>
-  </div>
+  <section class="container-1280">
+    <div class="detail-wrap p-0-16">
+      <section class="detail-content">
+        <div class="content-header">
+          <img class="header-thumnail" src="{{ book.thumbnail }}" height="250">
+          <div class="header-info p-0-24">
+            <p class="title-2-bold">{{ book.title }}</p>
+            <p class="body-2-narrow">{{ book.authors }}<span class="caption-1"> 지음</span>{% if book.translators %} | {{ book.translators }}<span class="caption-1"> 옮김</span>{% endif %}</p>
+            <p class="body-2-narrow">{{ book.publisher }}<span class="caption-1"> 출판</span></p>
+            <br/>
+            <p class="body-2-narrow"><span class="badge badge-info">출간일</span> {{ book.date_publish }}</p>
+            <p class="body-2-narrow"><span class="badge badge-info">ISBN</span> {{ book.isbn }}</p>
+          </div>
+        </div>
+        <div class="content-links mt-50">
+          <p class="subtitle-1-bold">전자책 보러가기</p>
+          <hr/>
+          <p class="body-2-narrow"><span class="badge badge-info">업데이트</span> {{ book.dt_created|date:'Y년 m월 d일' }}</p>
+          <div class="links-wrapper">
+            {% for ebook in ebooks %}
+              <a class="link link-block" href="{{ ebook.url }}">{{ ebook.book_store }}</a>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="content-text mt-50">
+          <p class="subtitle-1-bold">책 소개</p>
+          <hr/>
+          <div>{{ book.contents }}</div>
+        </div>
+      </section>
+      <section class="detail-side">
+        hi
+      </section>
+    </div>
+  </section>
 {% endblock content_wrapper %}
 
 {% block extrascripts %}

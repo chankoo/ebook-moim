@@ -1,0 +1,34 @@
+body.book-detail {
+  margin: 0;
+
+  .detail-wrap {
+    .detail-content{
+      display: inline-block;
+      padding: 20px;
+      max-width: calc(100% - 300px);
+      border-right: solid 2px $color-gray100;
+
+
+      .content-header {
+        .header-thumnail{
+          display: inline-block;
+        }
+        .header-info {
+          display: inline-block;
+          vertical-align: top;
+        }
+      }
+      .content-links {
+        .links-wrapper {
+        }
+      }
+
+    }
+    .detail-side {
+      display: inline-block;
+      vertical-align: top;
+      width: 250px;
+    }
+  }
+
+}
