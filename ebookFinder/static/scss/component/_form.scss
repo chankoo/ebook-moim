@@ -9,9 +9,14 @@
   -moz-transition: all 0.2s ease-in-out;
   -o-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
+}
 
-  input[type=text] {
-    border: 0;
+input[type=text] {
+  border: 0;
+  color: $color-gray600;
+}
 
-  }
+.form-control-lg {
+  @extend .form-control;
+  font-size: 20px;
 }

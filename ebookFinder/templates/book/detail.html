@@ -3,6 +3,14 @@
 {% block title %}{{ book.title }}{% endblock %}
 {% block body_class %}book-detail{% endblock body_class %}
 {% block extrahead %}
+  {% block meta_description %}
+    <meta property="title" content="{{ book.title }} | ebookFinder"/>
+    <meta property="og:title" content="{{ book.title }} | ebookFinder"/>
+    <meta name="description" content="{{ book.contents }}"/>
+    <meta property="og:description" content="{{ book.contents }}"/>
+    <meta property="og:image" content="{{ book.thumbnail }}"/>
+    <meta property="keyword" content="ebookFinder,전자책,ebook,pdf,책,서점,독후감,리뷰,{{ book.title }}">
+  {% endblock %}
 {% endblock extrahead %}
 {% block content_wrapper %}
   <div class="container-1280">
@@ -11,35 +19,38 @@
         <div class="content-header">
           <img class="header-thumnail" src={% if book.thumbnail %}"{{ book.thumbnail }}"{% else %}{% static "img/no-book-img.png" %}{% endif %} height="250">
           <div class="header-info p-0-24">
-            <p class="title-2-bold">{{ book.title }}</p>
+            <h1 class="title-2-bold">{{ book.title }}</h1>
             <p class="body-2-narrow">{{ book.authors }}<span class="caption-1"> 지음</span>{% if book.translators %} | {{ book.translators }}<span class="caption-1"> 옮김</span>{% endif %}</p>
             <p class="body-2-narrow">{{ book.publisher }}<span class="caption-1"> 출판</span></p>
             <br/>
+            <p class="body-2-narrow"><span class="badge badge-info">정가</span> {{ book.price }}원</p>
             <p class="body-2-narrow"><span class="badge badge-info">출간일</span> {{ book.date_publish }}</p>
             <p class="body-2-narrow"><span class="badge badge-info">ISBN</span> {{ book.isbn }}</p>
           </div>
         </div>
         <div class="content-links mt-50">
-          <p class="subtitle-1-bold">전자책 보러가기</p>
+          <h2 class="subtitle-1-bold">전자책 보러가기</h2>
           <hr/>
-          <p class="body-2-narrow"><span class="badge badge-info">업데이트</span> {{ book.dt_created|date:'Y년 m월 d일' }}</p>
+          <p class="mb-20"><span class="badge badge-success caption-1-bold">업데이트</span> {{ book.dt_created|date:'Y년 m월' }}</p>
           <div class="links-wrapper">
             {% for ebook in ebooks %}
-              <a class="link link-block" href="{{ ebook.url }}">
-                <img class="item-thumnail" src="{{ book.thumbnail }}" height="100">
-                {{ ebook.book_store }}
+              <a class="link link-block" href="{{ ebook.url }}" target="_blank">
+                <img alt="{{ ebook.repr }}" class="item-thumnail" src="{{ ebook.logo }}" height="64">
+                <div class="item-info">
+                  <h3 class="body-1-bold info-title m-8-0">{{ ebook.book.title }} - {{ ebook.repr }}</h3>
+                  <span class="caption-1 info-etc">{% if ebook.price %}{{ ebook.price }}원{% endif %}</span>
+                </div>
               </a>
             {% endfor %}
           </div>
         </div>
         <div class="content-text mt-50">
-          <p class="subtitle-1-bold">책 소개</p>
+          <h2 class="subtitle-1-bold">책 소개</h2>
           <hr/>
-          <div>{{ book.contents }}</div>
+          <div class="body-1">{{ book.contents|safe }}...</div>
         </div>
       </section>
       <section class="detail-side">
-        hi
       </section>
     </div>
   </div>

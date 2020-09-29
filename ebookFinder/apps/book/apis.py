@@ -94,5 +94,7 @@ def get_ebooks_info(isbn) -> list:
             info = {}
             info['book_store'] = STORE['name']
             info['url'] = store_url + href if 'http' not in href else href
+            price_str = res.text.split('원')[0].replace(STORE['keyword'], '').replace(',', '').strip()
+            info['price'] = int(price_str) if price_str else 0
             result.append(info)
     return result

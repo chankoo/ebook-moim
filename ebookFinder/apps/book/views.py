@@ -8,6 +8,7 @@ from django.db import DataError
 from ebookFinder.apps.book.models import Book, Ebook
 from ebookFinder.apps.book.tasks import save_ebook_raw
 from ebookFinder.apps.book.apis import search_books, get_book_info, get_ebooks_info
+from ebookFinder.apps.book.consts import LOGOS, STORE_NAME_REPR
 
 
 class IndexView(TemplateView):
@@ -60,11 +61,11 @@ class BookDetailView(TemplateView):
                 if k == 'isbn':
                     setattr(book, k, v.replace(' ', '-'))
                 elif k == 'authors':
-                    setattr(book, k, '|'.join(v))
+                    setattr(book, k, ', '.join(v))
                 elif k == 'datetime':
                     setattr(book, 'date_publish', v.split('T')[0])
                 elif k == 'translators':
-                    setattr(book, k, '|'.join(v))
+                    setattr(book, k, ', '.join(v))
                 elif k == 'status':
                     setattr(book, 'sell_status', v)
                 else:
@@ -93,5 +94,10 @@ class BookDetailView(TemplateView):
 
         context = self.get_context_data(**kwargs)
         context['book'] = book
-        context['ebooks'] = book.ebooks.all()
+        ebooks = []
+        for ebook in book.ebooks.all():
+            ebook.logo = LOGOS[ebook.book_store]
+            ebook.repr = STORE_NAME_REPR[ebook.book_store]
+            ebooks.append(ebook)
+        context['ebooks'] = ebooks
         return self.render_to_response(context=context)

@@ -18,7 +18,6 @@ header {
       }
     }
     .nav-logo-wrapper {}
-    .left-nav {}
     .searchbox-wrapper {
       min-width: 250px;
       width: 60%;
@@ -28,8 +27,14 @@ header {
       }
 
     }
-    .right-nav {}
+    .gnb-menu {
+      color: $color-white;
+      text-decoration: none;
+
+      &:hover {
+        background-color: $color-indigo200;
+      }
+    }
     .nav-divider {border-left: 1px solid $color-indigo400;}
-    .gnb-menu {color: $color-white; &:hover {background-color: $color-indigo200;}}
   }
 }

@@ -183,6 +183,13 @@
   @extend .caption-1;
   @include font-weight-bold;
 }
+.caption-1-hover {
+  @extend .caption-1;
+
+  &:hover {
+    color: $color-gray10;
+  }
+}
 
 
 .caption-2 {

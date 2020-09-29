@@ -94,6 +94,11 @@ class Ebook(models.Model):
         default=''
     )
 
+    price = models.IntegerField(
+        null=True,
+        blank=True
+    )
+
     raw = models.TextField(
         default=''
     )

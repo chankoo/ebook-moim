@@ -6,23 +6,26 @@
       <section class="base-nav">
         <div class="container-1280 p-16">
           <nav class="d-flex align-items-center ">
-            <a class="nav-logo-wrapper" href="/">ebookFinder</a>
-            <div class="left-nav">
-              <a href="" class="gnb-menu body-2">GNB1</a>
-              <a href="" class="gnb-menu body-2">GNB2</a>
-            </div>
+            <a class="nav-logo-wrapper gnb-menu mr-20 title-2-light" href="/book/">ebookFinder
+            </a>
             <div class="searchbox-wrapper">
               <form method="get" action="/book/list">
-                <div class="form-control">
-                  <i class="fas fa-search"></i>
-                  <input type="text" name="query"/>
+                <div class="form-group d-flex align-items-center">
+                  <label class="mr-10">
+                    <i class="fas fa-search fa-lg"></i>
+                  </label>
+                  <input class="form-control-lg" type="text" name="query"/>
                 </div>
               </form>
             </div>
-            <div class="right-nav push">
+            <div class="left-nav push hide">
+              <a href="" class="gnb-menu body-2">GNB1</a>
+              <a href="" class="gnb-menu body-2">GNB2</a>
+            </div>
+            <div class="right-nav push hide">
               <div class="right-nav-list">
                 <a class="right-nav-item" href="#" data-toggle="dropdown">
-                  <i class="fas fa-bars"></i>
+                  <i class="fas fa-bars fa-2x" style="color: #000;"></i>
                 </a>
                 <div class="nav-dropdown hide">
                   <a tabindex="-1" class="nav-dropdown-item body-2" href=""><i class="fas fa-pen"></i>dropdown1
@@ -40,7 +43,6 @@
   {% endblock %}
 
   {% block message %}
-    {% include "messages.html" %}
   {% endblock message %}
 
   <div class="gaia">

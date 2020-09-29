@@ -4,29 +4,17 @@ body.book-list {
   .list-wrap {
     .list-content{
       display: inline-block;
-      max-width: calc(100% - 300px);
+      width: calc(100% - 250px);
       border-right: solid 2px $color-gray100;
 
       .content-item {
-        .item-thumnail{
-          display: inline-block;
-        }
-        .item-info {
-          display: inline-block;
-          vertical-align: top;
-        }
-      }
-      .content-links {
-        .links-wrapper {
-        }
-      }
 
+      }
     }
     .list-side {
       display: inline-block;
       vertical-align: top;
-      width: 250px;
+      width: 200px;
     }
   }
-
 }
