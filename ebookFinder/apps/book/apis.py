@@ -1,7 +1,8 @@
 import requests
 import urllib.parse
 from bs4 import BeautifulSoup
-from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USER_AGENT, BOOK_STORES
+from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USER_AGENT, \
+    BOOK_STORES, AFFILIATE_API_ENDPOINT, AFFILIATE_ID
 
 
 def search_books(data) -> dict:
@@ -73,11 +74,10 @@ def get_ebooks_info(isbn) -> list:
             )
             if good:
                 break
-
         if good is None:
-            raise ValueError('The good not exist!')
-        links = good.select('a')
+            continue
 
+        links = good.select('a')
         res = None
         for a in links:
             if a.string is None:
@@ -93,8 +93,23 @@ def get_ebooks_info(isbn) -> list:
             store_url = STORE['domain']
             info = {}
             info['book_store'] = STORE['name']
-            info['url'] = store_url + href if 'http' not in href else href
+            url = store_url + href if 'http' not in href else href
+            info['url'] = url
+            info['deeplink'] = get_deeplink(url)
             price_str = res.text.split('원')[0].replace(STORE['keyword'], '').replace(',', '').strip()
             info['price'] = int(price_str) if price_str else 0
             result.append(info)
     return result
+
+
+def get_deeplink(url) -> str:
+    params = {'a_id': AFFILIATE_ID, 'url': url, 'mode': 'json'}
+    query = urllib.parse.urlencode(params)
+    api_url = AFFILIATE_API_ENDPOINT + "?" + query
+    res = requests.get(api_url)
+    try:
+        deeplink = res.json()['url']
+    except Exception as e:
+        deeplink = ''
+        print(e)
+    return deeplink

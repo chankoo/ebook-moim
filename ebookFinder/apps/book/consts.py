@@ -1,12 +1,8 @@
-KAKAO_API_KEY = '68fa5e7aa69b0d975f53e6eee037a76a'
-
-
-SEARCH_API_ENDPOINT = 'https://dapi.kakao.com/v3/search/book?target=title'
-
-
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'
-
-
+KAKAO_API_KEY = '68fa5e7aa69b0d975f53e6eee037a76a'
+SEARCH_API_ENDPOINT = 'https://dapi.kakao.com/v3/search/book?target=title'
+AFFILIATE_API_ENDPOINT = 'https://api.linkprice.com/ci/service/custom_link_xml'
+AFFILIATE_ID = 'A100670223'
 BOOK_STORES = [
     {
         'name': 'yes24',
@@ -49,7 +45,7 @@ BOOK_STORES = [
 
 LOGOS = {
     'yes24': '/static/img/logo_yes24.png',
-    'interpark': '/static/img/logo_interpark.png',
+    'interpark': '/static/img/logo_interpark.jpg',
     'kyobobook': '/static/img/logo_kyobobook.png',
     'aladin': '/static/img/logo_aladin.png',
 }

@@ -20,7 +20,7 @@
       <ul style="list-style-type: none;">
         {% for book in books %}
           <li>
-            <a class="content-item link link-block" href="/book/{{ book.isbn | slugify }}">
+            <a class="content-item link link-block" href="/book/{{ book.isbn | slugify }}" target="_blank">
               <img class="item-thumnail" src={% if book.thumbnail %}"{{ book.thumbnail }}"{% else %}{% static "img/no-book-img.png" %} width="70"{% endif %} height="100">
               <div class="item-info">
                 <h2 class="subtitle-2-bold info-title">{{ book.title }}</h2>

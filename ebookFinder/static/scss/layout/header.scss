@@ -17,7 +17,6 @@ header {
         }
       }
     }
-    .nav-logo-wrapper {}
     .searchbox-wrapper {
       min-width: 250px;
       width: 60%;
@@ -32,7 +31,7 @@ header {
       text-decoration: none;
 
       &:hover {
-        background-color: $color-indigo200;
+        background-color: $color-indigo300;
       }
     }
     .nav-divider {border-left: 1px solid $color-indigo400;}

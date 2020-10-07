@@ -4,11 +4,13 @@ from django.views.generic.base import TemplateView, View
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 from django.db import DataError
+from django.contrib import messages
 
 from ebookFinder.apps.book.models import Book, Ebook
 from ebookFinder.apps.book.tasks import save_ebook_raw
 from ebookFinder.apps.book.apis import search_books, get_book_info, get_ebooks_info
 from ebookFinder.apps.book.consts import LOGOS, STORE_NAME_REPR
+from ebookFinder.apps.utils.eb_datetime import tz_now
 
 
 class IndexView(TemplateView):
@@ -30,6 +32,8 @@ class BookListView(TemplateView):
             context.update(result)
         except Exception as e:
             print(e)
+            messages.warning(request, '일시적으로 검색이 원활하지 않습니다.')
+            return HttpResponseRedirect('/book/')
         return self.render_to_response(context=context)
 
 
@@ -78,19 +82,20 @@ class BookDetailView(TemplateView):
             except Exception as e:
                 raise Http404(str(e))
 
-        if not book.ebooks.exists():
-            # Ebook 정보 없을 경우 웹상에서 정보 조회
+        if book.need_ebook_update:
             try:
                 infos = get_ebooks_info(book.isbn)
-            except ValueError as e:
+            except ValueError:
                 infos = []
-                print(e)
-            for info in infos:
-                ebook = Ebook(**info)
-                ebook.book = book
-                ebook.save()
-                # Ebook 상품 상세페이지 데이터 비동기로 저장
-                save_ebook_raw.apply_async((info['url'], ebook.id), countdown=1)
+            finally:
+                for info in infos:
+                    ebook = Ebook(**info)
+                    ebook.book = book
+                    ebook.save()
+                    # Ebook 상품 상세페이지 데이터 비동기로 저장
+                    save_ebook_raw.apply_async((info['url'], ebook.id), countdown=1)
+                book.date_searched = tz_now().date()
+                book.save()
 
         context = self.get_context_data(**kwargs)
         context['book'] = book

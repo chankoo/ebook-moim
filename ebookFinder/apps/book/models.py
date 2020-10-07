@@ -1,7 +1,11 @@
 # -*- coding:utf-8 -*-
 
+import datetime
+
 from django.db import models
 from django.urls import reverse
+
+from ebookFinder.apps.utils.eb_datetime import tz_now
 
 
 class Book(models.Model):
@@ -59,6 +63,11 @@ class Book(models.Model):
         default=''
     )
 
+    date_searched = models.DateField(
+        null=True,
+        blank=True
+    )
+
     dt_created = models.DateTimeField(
         auto_now_add=True,
         editable=False
@@ -70,6 +79,12 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def need_ebook_update(self):
+        if self.date_searched is None:
+            return True
+        return self.date_searched + datetime.timedelta(days=30) < tz_now().date()
 
     def get_absolute_url(self):
         return reverse('blog:post_detail', args=[self.id])
@@ -91,6 +106,11 @@ class Ebook(models.Model):
 
     url = models.CharField(
         max_length=500,
+        default=''
+    )
+
+    deeplink = models.CharField(
+        max_length=700,
         default=''
     )
 

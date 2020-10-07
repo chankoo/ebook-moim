@@ -6,7 +6,7 @@
       <section class="base-nav">
         <div class="container-1280 p-16">
           <nav class="d-flex align-items-center ">
-            <a class="nav-logo-wrapper gnb-menu mr-20 title-2-light" href="/book/">ebookFinder
+            <a class="nav-logo-wrapper gnb-menu mr-20 title-2-bold" href="/book/">ebookFinder
             </a>
             <div class="searchbox-wrapper">
               <form method="get" action="/book/list">
@@ -43,6 +43,7 @@
   {% endblock %}
 
   {% block message %}
+{#    {% include "partials/alert_messages.html" %}#}
   {% endblock message %}
 
   <div class="gaia">
@@ -55,7 +56,4 @@
 {% endblock %}
 
 {% block extrascripts %}
-  <script>
-
-  </script>
 {% endblock %}

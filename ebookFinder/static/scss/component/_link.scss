@@ -28,6 +28,11 @@
     border: solid 1px $color-indigo300;
     border-radius: 5px;
 
+    &.logo {
+      width: 128px;
+      text-align: center;
+      background-color: white;
+    }
   }
   .item-info {
     display: inline-block;
