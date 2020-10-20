@@ -10,19 +10,16 @@
 
 
 .title-1 {
+  font-family: Gamja Flower;
   font-weight: 700;
   font-size: 48px;
   line-height: 64px;
 }
-.title-2-light {
+.title-1-light {
   @extend .title-1;
   @include font-weight-light;
 }
-.subtitle-2-medium {
-  @extend .title-1;
-  @include font-weight-medium;
-}
-.title-2-bold {
+.title-1-bold {
   @extend .title-1;
   @include font-weight-bold;
 }
@@ -36,10 +33,6 @@
 .title-2-light {
   @extend .title-2;
   @include font-weight-light;
-}
-.subtitle-2-medium {
-  @extend .title-2;
-  @include font-weight-medium;
 }
 .title-2-bold {
   @extend .title-2;
