@@ -89,8 +89,11 @@ class BookDetailView(TemplateView):
                 infos = []
             finally:
                 for info in infos:
-                    ebook = Ebook(**info)
-                    ebook.book = book
+                    ebook, created = Ebook.objects.get_or_create(book=book,
+                                                                 book_store=info['book_store'])
+                    ebook.url = info['url']
+                    ebook.deeplink = info['deeplink']
+                    ebook.price = info['price']
                     ebook.save()
                     # Ebook 상품 상세페이지 데이터 비동기로 저장
                     save_ebook_raw.apply_async((info['url'], ebook.id), countdown=1)
