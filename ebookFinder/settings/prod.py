@@ -5,11 +5,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS': {
-            'read_default_file':
-                os.path.join(DJANGO_ROOT, 'settings/local_database.conf'),
+            'read_default_file': os.path.join(DJANGO_ROOT, 'settings/prod_database.conf'),
         },
         'TEST': {
-            'NAME': 'ebookFinder_test'
+            'NAME': 'ebook_moim'
         }
     }
 }

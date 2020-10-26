@@ -5,12 +5,9 @@ import sys
 
 
 def main():
-    try:
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ebookFinder.settings.local')
-        from django.core.management import execute_from_command_line
-        execute_from_command_line(sys.argv)
-    except Exception as e:
-        print(e)
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ebookFinder.settings.prod')
+    from django.core.management import execute_from_command_line
+    execute_from_command_line(sys.argv)
 
 
 if __name__ == '__main__':

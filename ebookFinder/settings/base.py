@@ -6,6 +6,8 @@ pymysql.install_as_MySQLdb()
 import os
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
+from django.core.exceptions import ImproperlyConfigured
+
 
 # 경로 설정
 DJANGO_ROOT = dirname(dirname(abspath(__file__)))
