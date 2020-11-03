@@ -30,9 +30,7 @@ class BookListView(TemplateView):
             context['query'] = request.GET.get('query', '')
             result = search_books(request.GET)
             context.update(result)
-        except Exception as e:
-            print(e)
-            messages.warning(request, '일시적으로 검색이 원활하지 않습니다.')
+        except Exception:
             return HttpResponseRedirect('/book/')
         return self.render_to_response(context=context)
 

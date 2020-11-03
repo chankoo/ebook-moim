@@ -19,7 +19,7 @@ def search_books(data) -> dict:
 
     res = requests.get(api_url, headers=headers)
     if res.status_code != 200:
-        raise Exception('Search API Failed')
+        res.raise_for_status()
     res = res.json()
     books_meta = res.get('meta', {})
     books = res.get('documents', [])
@@ -109,7 +109,6 @@ def get_deeplink(url) -> str:
     res = requests.get(api_url)
     try:
         deeplink = res.json()['url']
-    except Exception as e:
+    except Exception:
         deeplink = ''
-        print(e)
     return deeplink
