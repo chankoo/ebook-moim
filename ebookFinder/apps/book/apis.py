@@ -109,6 +109,8 @@ def get_deeplink(url) -> str:
     res = requests.get(api_url)
     try:
         deeplink = res.json()['url']
+        if deeplink is None:
+            deeplink = ''
     except Exception:
         deeplink = ''
     return deeplink

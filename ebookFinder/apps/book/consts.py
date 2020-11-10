@@ -2,7 +2,7 @@ USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/537.36
 KAKAO_API_KEY = '68fa5e7aa69b0d975f53e6eee037a76a'
 SEARCH_API_ENDPOINT = 'https://dapi.kakao.com/v3/search/book?target=title'
 AFFILIATE_API_ENDPOINT = 'https://api.linkprice.com/ci/service/custom_link_xml'
-AFFILIATE_ID = 'A100670223'
+AFFILIATE_ID = 'A100670817'
 BOOK_STORES = [
     {
         'name': 'yes24',
