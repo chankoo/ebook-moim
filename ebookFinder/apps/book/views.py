@@ -30,7 +30,9 @@ class BookListView(TemplateView):
             context['query'] = request.GET.get('query', '')
             result = search_books(request.GET)
             context.update(result)
-        except Exception:
+        except Exception as e:
+            messages.error(request, '책검색 API가 일시적으로 동작하지 않습니다.\n'
+                                    '잠시 후에 다시 시도해주세요.\n{msg} :('.format(msg=str(e)))
             return HttpResponseRedirect('/book/')
         return self.render_to_response(context=context)
 
