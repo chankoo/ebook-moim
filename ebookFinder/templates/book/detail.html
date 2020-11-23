@@ -2,16 +2,14 @@
 {% load i18n static %}
 {% block title %}{{ book.title }}{% endblock %}
 {% block body_class %}book-detail{% endblock body_class %}
-{% block extrahead %}
-  {% block meta_description %}
-    <meta property="title" content="{{ book.title }} | 이북모임?!"/>
-    <meta property="og:title" content="{{ book.title }} | 이북모임?!"/>
-    <meta name="description" content="{{ book.contents }}"/>
-    <meta property="og:description" content="{{ book.contents }}"/>
-    <meta property="og:image" content="{{ book.thumbnail }}"/>
-    <meta property="keyword" content="이북모임?!,전자책,ebook,pdf,책,서점,독후감,리뷰,{{ book.title }}">
-  {% endblock %}
-{% endblock extrahead %}
+{% block meta_description %}
+  <meta property="title" content="{{ book.title }} | 이북모임"/>
+  <meta property="og:title" content="{{ book.title }} | 이북모임"/>
+  <meta name="description" content="{{ book.contents }}"/>
+  <meta property="og:description" content="{{ book.contents }}"/>
+  <meta property="og:image" content="{{ book.thumbnail }}"/>
+  <meta property="keyword" content="{{ book.title }},이북모임,이북,전자책,ebook,pdf,서점,독후감,리뷰,가격">
+{% endblock %}
 {% block content_wrapper %}
   <div class="container-1280">
     <div class="detail-wrap p-0-16">
