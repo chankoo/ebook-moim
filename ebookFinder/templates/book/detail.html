@@ -8,7 +8,11 @@
   <meta name="description" content="{{ book.contents }}"/>
   <meta property="og:description" content="{{ book.contents }}"/>
   <meta property="og:image" content="{{ book.thumbnail }}"/>
+  <meta property="og:url" content="{{ book.absolute_url }}">
   <meta property="keyword" content="{{ book.title }},이북모임,이북,전자책,ebook,pdf,서점,독후감,리뷰,가격">
+{% endblock %}
+{% block extrahead %}
+  <link rel="canonical" href="{{ book.absolute_url }}">
 {% endblock %}
 {% block content_wrapper %}
   <div class="container-1280">

@@ -1,5 +1,7 @@
 from ebookFinder.settings.base import *
 
+DEBUG = True
+
 # Database
 DATABASES = {
     'default': {

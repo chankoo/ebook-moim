@@ -3,9 +3,10 @@
 import datetime
 
 from django.db import models
-from django.urls import reverse
+from django.conf import settings
 
 from ebookFinder.apps.utils.eb_datetime import tz_now
+from ebookFinder.settings.base import SERVICE_DOMAIN
 
 
 class Book(models.Model):
@@ -86,8 +87,10 @@ class Book(models.Model):
             return True
         return self.date_searched + datetime.timedelta(days=30) < tz_now().date()
 
-    def get_absolute_url(self):
-        return reverse('blog:post_detail', args=[self.id])
+    @property
+    def absolute_url(self):
+        domain = '' if settings.DEBUG else settings.SERVICE_DOMAIN
+        return '{domain}/book/{isbn}'.format(domain=domain, isbn=self.isbn)
 
 
 class Ebook(models.Model):

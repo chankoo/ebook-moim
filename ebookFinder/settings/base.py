@@ -120,3 +120,5 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+SERVICE_DOMAIN = 'https://ebookmoim.ml'
