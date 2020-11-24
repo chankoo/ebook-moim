@@ -15,6 +15,7 @@
   <meta property="product:price:amount" content="{{ lowest_price|slugify }}">
   <meta property="product:price:currency" content="KRW">
   <meta property="product:retailer_item_id" content="{{ book.isbn }}">
+  <meta property="product:fb_product_category" content="{{ book.fb_product_category }}">
   <meta property="keyword" content="{{ book.title }},이북모임,이북,전자책,ebook,pdf,서점,독후감,리뷰,가격">
 {% endblock %}
 {% block extrahead %}
