@@ -9,6 +9,11 @@
   <meta property="og:description" content="{{ book.contents }}"/>
   <meta property="og:image" content="{{ book.thumbnail }}"/>
   <meta property="og:url" content="{{ book.absolute_url }}">
+  <meta property="product:brand" content="이북모임">
+  <meta property="product:availability" content="in stock">
+  <meta property="product:condition" content="new">
+  <meta property="product:price:amount" content="{{ lowest_price|slugify }}">
+  <meta property="product:price:currency" content="KRW">
   <meta property="keyword" content="{{ book.title }},이북모임,이북,전자책,ebook,pdf,서점,독후감,리뷰,가격">
 {% endblock %}
 {% block extrahead %}
