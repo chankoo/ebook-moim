@@ -14,6 +14,11 @@
 {% block extrahead %}
   <link rel="canonical" href="{{ book.absolute_url }}">
 {% endblock %}
+{% block facebook_track %}
+  <script>
+    fbq('track', 'PageView');
+  </script>
+{% endblock %}
 {% block content_wrapper %}
   <div class="container-1280">
     <div class="detail-wrap p-0-16">
