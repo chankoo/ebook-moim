@@ -77,9 +77,9 @@
   {{ block.super }}
   <script>
     fbq('track', 'ViewContent', {
-      content_ids: ['{{ project.id|slugify }}'],
+      content_ids: ['{{ book.isbn }}'],
       content_type: 'product',
-      value: {{ project.budget|slugify }},
+      value: {{ book.price|slugify }},
       currency: 'KRW',
       content_category: '{{ book.publisher }}',
     });
