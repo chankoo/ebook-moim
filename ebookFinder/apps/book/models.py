@@ -92,12 +92,6 @@ class Book(models.Model):
         domain = '' if settings.DEBUG else settings.SERVICE_DOMAIN
         return '{domain}/book/{isbn}'.format(domain=domain, isbn=self.isbn)
 
-    @property
-    def fb_product_category(self):
-        if 'ai' in self.title.lower():
-            return '135348824700964'
-        return '490923595217062'
-
 
 class Ebook(models.Model):
     book = models.ForeignKey(

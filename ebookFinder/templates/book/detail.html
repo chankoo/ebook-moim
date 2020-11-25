@@ -15,7 +15,8 @@
   <meta property="product:price:amount" content="{{ lowest_price|slugify }}">
   <meta property="product:price:currency" content="KRW">
   <meta property="product:retailer_item_id" content="{{ book.isbn }}">
-  <meta property="product:fb_product_category" content="{{ book.fb_product_category }}">
+  <meta property="product:custom_label_0" content="{{ book.publisher }}">
+  <meta property="product:custom_label_1" content="{{ book.date_searched|date:'Ym' }}">
   <meta property="keyword" content="{{ book.title }},이북모임,이북,전자책,ebook,pdf,서점,독후감,리뷰,가격">
 {% endblock %}
 {% block extrahead %}
@@ -74,4 +75,13 @@
 
 {% block extrascripts %}
   {{ block.super }}
+  <script>
+    fbq('track', 'ViewContent', {
+      content_ids: ['{{ project.id|slugify }}'],
+      content_type: 'product',
+      value: {{ project.budget|slugify }},
+      currency: 'KRW',
+      content_category: '{{ book.publisher }}',
+    });
+  </script>
 {% endblock %}
