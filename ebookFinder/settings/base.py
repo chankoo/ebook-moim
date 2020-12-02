@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ebookFinder.apps.book',
+    'ebookFinder.apps.log',
 ]
 
 MIDDLEWARE = [

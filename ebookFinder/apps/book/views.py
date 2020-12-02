@@ -11,6 +11,7 @@ from ebookFinder.apps.book.tasks import save_ebook_raw
 from ebookFinder.apps.book.apis import search_books, get_book_info, get_ebooks_info
 from ebookFinder.apps.book.consts import LOGOS, STORE_NAME_REPR
 from ebookFinder.apps.utils.eb_datetime import tz_now
+from ebookFinder.apps.log.models import SearchHistory
 
 
 class IndexView(TemplateView):
@@ -27,8 +28,15 @@ class BookListView(TemplateView):
     def get(self, request, *args, **kwargs):
         try:
             context = {}
-            context['query'] = request.GET.get('query', '')
-            result = search_books(request.GET)
+            q = request.GET.get('q', '')
+            if request.session.session_key is None:
+                request.session.save()
+            session_id = request.session.session_key
+            if q:
+                SearchHistory.objects.create(q=q, user_identifier=session_id)
+
+            context['q'] = q
+            result = search_books(q)
             context.update(result)
         except Exception as e:
             messages.error(request, '책검색 API가 일시적으로 동작하지 않습니다.\n'
