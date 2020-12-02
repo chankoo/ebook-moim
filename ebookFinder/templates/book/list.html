@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 {% load i18n static %}
-{% block title %}{{ query }}의 검색결과{% endblock %}
+{% block title %}{{ q }}의 검색결과{% endblock %}
 {% block body_class %}book-list{% endblock body_class %}
 {% block extrahead %}
   {% block meta_description %}
-    <meta property="title" content="{{ query }}의 검색 결과 | 이북모임"/>
-    <meta property="og:title" content="{{ query }}의 검색 결과 | 이북모임"/>
+    <meta property="title" content="{{ q }}의 검색 결과 | 이북모임"/>
+    <meta property="og:title" content="{{ q }}의 검색 결과 | 이북모임"/>
     <meta name="description" content="이북모임"/>
     <meta property="og:description" content="이북모임"/>
     <meta property="og:image" content="이북모임"/>
@@ -14,7 +14,7 @@
 {% endblock extrahead %}
 {% block content_wrapper %}
   <div class="list-wrap p-0-16 container-1280">
-    <h1 class="list-meta subtitle-1 text500">'{{ query }}'의 검색 결과 | {{ books_meta.total_count }} 건
+    <h1 class="list-meta subtitle-1 text500">'{{ q }}'의 검색 결과 | {{ books_meta.total_count }} 건
     </h1>
     <section class="list-content">
       <ul style="list-style-type: none;">

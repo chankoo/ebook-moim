@@ -5,14 +5,13 @@ from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USE
     BOOK_STORES, AFFILIATE_API_ENDPOINT, AFFILIATE_ID
 
 
-def search_books(data) -> dict:
+def search_books(q) -> dict:
     headers = {
         'User-agent': USER_AGENT,
         'referer': None,
         'Authorization': 'KakaoAK {api_key}'.format(api_key=KAKAO_API_KEY)
     }
 
-    q = data.get('query', '')
     params = {"page": 1, "size": 50, "query": q}
     query = urllib.parse.urlencode(params)
     api_url = SEARCH_API_ENDPOINT + "?" + query
