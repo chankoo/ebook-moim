@@ -47,6 +47,48 @@ def get_book_info(isbn) -> dict:
     return res[0]
 
 
+def get_ebook_info(isbns, headers, store) -> dict:
+    result = {}
+    base = store['domain'] + store['base']
+    good = None
+
+    for isbn in isbns:
+        params = {store['param_key']: isbn}
+        query = urllib.parse.urlencode(params)
+        url = "?".join([base, query])
+        res = requests.get(url, headers=headers)
+        soup = BeautifulSoup(res.text, 'html.parser')
+        good = soup.select_one(
+            store['good_selector']
+        )
+        if good:
+            break
+    if good is None:
+        return result
+
+    links = good.select('a')
+    res = None
+    for a in links:
+        if a.string is None:
+            for s in a.stripped_strings:
+                if s == store['keyword']:
+                    res = a
+
+    if res is None:
+        res = good.find('a', {'title': store['keyword']})
+
+    if res:
+        href = res.get('href', '') if res else ''
+        store_url = store['domain']
+        result['book_store'] = store['name']
+        url = store_url + href if 'http' not in href else href
+        result['url'] = url
+        result['deeplink'] = get_deeplink(url)
+        price_str = res.text.split('원')[0].replace(store['keyword'], '').replace(',', '').strip()
+        result['price'] = int(price_str) if price_str else 0
+    return result
+
+
 def get_ebooks_info(isbn) -> list:
     if '-' in isbn:
         isbns = isbn.split('-')
@@ -58,45 +100,9 @@ def get_ebooks_info(isbn) -> list:
     }
 
     result = []
-    good = None
     for STORE in BOOK_STORES:
-        base = STORE['domain'] + STORE['base']
-
-        for isbn in isbns:
-            params = {STORE['param_key']: isbn}
-            query = urllib.parse.urlencode(params)
-            url = "?".join([base, query])
-            res = requests.get(url, headers=headers)
-            soup = BeautifulSoup(res.text, 'html.parser')
-            good = soup.select_one(
-                STORE['good_selector']
-            )
-            if good:
-                break
-        if good is None:
-            continue
-
-        links = good.select('a')
-        res = None
-        for a in links:
-            if a.string is None:
-                for s in a.stripped_strings:
-                    if s == STORE['keyword']:
-                        res = a
-
-        if res is None:
-            res = good.find('a', {'title': STORE['keyword']})
-
-        if res:
-            href = res.get('href', '') if res else ''
-            store_url = STORE['domain']
-            info = {}
-            info['book_store'] = STORE['name']
-            url = store_url + href if 'http' not in href else href
-            info['url'] = url
-            info['deeplink'] = get_deeplink(url)
-            price_str = res.text.split('원')[0].replace(STORE['keyword'], '').replace(',', '').strip()
-            info['price'] = int(price_str) if price_str else 0
+        info = get_ebook_info(isbns, headers, STORE)
+        if info:
             result.append(info)
     return result
 
