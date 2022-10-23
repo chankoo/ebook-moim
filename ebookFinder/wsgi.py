@@ -8,9 +8,15 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
 """
 
 import os
+import json
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ebookFinder.settings.local')
+config = {}
+if os.path.isfile("./config.json"):
+    with open("./config.json") as fp:
+        config = json.load(fp)
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', f"ebookFinder.settings.{config.get('env', 'local')}")
 
 application = get_wsgi_application()

@@ -2,10 +2,16 @@
 from __future__ import absolute_import
 
 import os
-from celery import Celery
+import json
 from django.conf import settings
+from celery import Celery
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ebookFinder.settings.local')
+config = {}
+if os.path.isfile("./config.json"):
+    with open("./config.json") as fp:
+        config = json.load(fp)
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', f"ebookFinder.settings.{config.get('env', 'local')}")
 
 app = Celery('ebookFinder')
 

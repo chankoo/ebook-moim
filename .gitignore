@@ -257,3 +257,6 @@ fabric.properties
 migrations/
 local_database.conf
 
+# config
+config.json
+secret_key.*
