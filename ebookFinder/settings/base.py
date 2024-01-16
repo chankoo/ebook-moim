@@ -9,8 +9,9 @@ from django.core.exceptions import ImproperlyConfigured
 
 
 # 경로 설정
-DJANGO_ROOT = str(Path(__file__).resolve().parent.parent.parent)
-path.append(DJANGO_ROOT)
+PROJECT_ROOT = str(Path(__file__).resolve().parent.parent.parent)
+path.append(PROJECT_ROOT)
+DJANGO_ROOT = str(Path(__file__).resolve().parent.parent)
 SITE_ROOT = dirname(DJANGO_ROOT)
 SITE_NAME = basename(DJANGO_ROOT)
 # 경로 설정 끝
@@ -42,10 +43,8 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # 정적 파일 설정
 STATIC_URL = '/static/'
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-)
+STATICFILES_DIRS = [join(DJANGO_ROOT, 'static')]
+STATIC_ROOT = join(DJANGO_ROOT, 'staticfiles')
 # 정적 파일 설정 끝
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -122,3 +121,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 SERVICE_DOMAIN = 'https://ebookmoim.ml'
+
+
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'

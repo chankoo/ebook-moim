@@ -1,0 +1,27 @@
+.container-free {
+  &::after {
+    content: '';
+    display: table;
+    clear:both;
+  }
+}
+
+.container {
+  width: 1080px;
+  margin: 0 auto;
+  &::after {
+    content: '';
+    display: table;
+    clear:both;
+  }
+}
+
+.container-1280 {
+  max-width: 1280px;
+  margin: 0 auto;
+  &::after {
+    content: '';
+    display: table;
+    clear:both;
+  }
+}

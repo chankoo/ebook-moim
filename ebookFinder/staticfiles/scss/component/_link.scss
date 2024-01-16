@@ -1,0 +1,41 @@
+.link {
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: $color-gray10;
+  color: $color-gray700;
+  text-decoration: none;
+
+  &:hover {
+    background-color: $color-indigo300;
+
+    .info-title {
+      color: $color-white;
+    }
+    .info-etc {
+      color: $color-gray10;
+    }
+  }
+}
+
+.link-block {
+  display: block;
+  min-height: 50px;
+  margin-bottom: 5px;
+  width: 100%;
+
+  .item-thumnail{
+    display: inline-block;
+    border: solid 1px $color-indigo300;
+    border-radius: 5px;
+
+    &.logo {
+      width: 128px;
+      text-align: center;
+      background-color: white;
+    }
+  }
+  .item-info {
+    display: inline-block;
+    vertical-align: top;
+  }
+}

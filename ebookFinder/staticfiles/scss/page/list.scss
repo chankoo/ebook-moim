@@ -1,0 +1,43 @@
+@media(min-width: 800px) {
+
+  body.book-list {
+    margin: 0;
+
+    .list-wrap {
+      .list-content {
+        display: inline-block;
+        width: calc(100% - 250px);
+        border-right: solid 2px $color-gray100;
+
+      }
+
+      .list-side {
+        display: inline-block;
+        vertical-align: top;
+        width: 200px;
+      }
+    }
+  }
+}
+
+@media(min-width: 320px) and (max-width: 800px) {
+  body.book-list {
+    margin: 0;
+
+    .list-wrap {
+      .list-content{
+        display: block !important;
+        width: 100%;
+        border-right: solid 2px $color-gray100;
+
+        ul {
+          padding: 0;
+        }
+
+      }
+      .list-side {
+        display: none !important;
+      }
+    }
+  }
+}
