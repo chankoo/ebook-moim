@@ -37,3 +37,5 @@ vine
 wcwidth
 zipp
 cryptography
+uvicorn
+httpx

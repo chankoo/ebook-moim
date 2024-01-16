@@ -1,7 +1,7 @@
 import os
 import json
 
-from django.core.wsgi import get_wsgi_application
+from django.core.asgi import get_asgi_application
 
 config = {}
 if os.path.isfile("./config.json"):
@@ -10,4 +10,4 @@ if os.path.isfile("./config.json"):
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', f"settings.{config.get('env', 'local')}")
 
-application = get_wsgi_application()
+application = get_asgi_application()

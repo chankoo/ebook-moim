@@ -1,5 +1,3 @@
-# -*- coding:utf-8 -*-
-
 from django.views.generic.base import TemplateView, View
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
@@ -25,7 +23,7 @@ class IndexView(TemplateView):
 class BookListView(TemplateView):
     template_name = 'book/list.html'
 
-    def get(self, request, *args, **kwargs):
+    async def get(self, request, *args, **kwargs):
         try:
             context = {}
             q = request.GET.get('q', '')
@@ -33,12 +31,13 @@ class BookListView(TemplateView):
                 request.session.save()
             session_id = request.session.session_key
             if q:
-                SearchHistory.objects.create(q=q, user_identifier=session_id)
+                await SearchHistory.objects.acreate(q=q, user_identifier=session_id)
 
             context['q'] = q
-            result = search_books(q)
+            result = await search_books(q)
             context.update(result)
         except Exception as e:
+            raise e
             messages.error(request, '책검색 API가 일시적으로 동작하지 않습니다.\n'
                                     '잠시 후에 다시 시도해주세요.\n{msg} :('.format(msg=str(e)))
             return HttpResponseRedirect('/book/')
@@ -59,14 +58,14 @@ class BookListAPIView(TemplateView):
 class BookDetailView(TemplateView):
     template_name = 'book/detail.html'
 
-    def get(self, request, *args, **kwargs):
+    async def get(self, request, *args, **kwargs):
         isbn_slug = kwargs.get('isbn_slug', '')
-        book, created = Book.objects.get_or_create(isbn=isbn_slug)
+        book, created = await Book.objects.aget_or_create(isbn=isbn_slug)
 
         if created:
             # 상세 페이지 처음 조회시 Book 객체 생성해 저장
             try:
-                info = get_book_info(isbn_slug.split('-')[0])
+                info = await get_book_info(isbn_slug.split('-')[0])
             except ValueError as e:
                 raise Http404(str(e))
             for k, v in info.items():
@@ -83,7 +82,7 @@ class BookDetailView(TemplateView):
                 else:
                     setattr(book, k, v)
             try:
-                book.save()
+                await book.asave()
             except DataError as e:
                 book.delete()
                 raise Http404(str(e))
@@ -92,27 +91,27 @@ class BookDetailView(TemplateView):
 
         if book.need_ebook_update:
             try:
-                infos = get_ebooks_info(book.isbn)
+                infos = await get_ebooks_info(book.isbn)
             except ValueError:
                 infos = []
             finally:
                 for info in infos:
-                    ebook, created = Ebook.objects.get_or_create(book=book,
+                    ebook, created = await Ebook.objects.aget_or_create(book=book,
                                                                  book_store=info['book_store'])
                     ebook.url = info['url']
                     ebook.deeplink = info['deeplink']
                     ebook.price = info['price']
-                    ebook.save()
+                    await ebook.asave()
                     # Ebook 상품 상세페이지 데이터 비동기로 저장
                     save_ebook_raw.apply_async((info['url'], ebook.id), countdown=1)
                 book.date_searched = tz_now().date()
-                book.save()
+                await book.asave()
 
         context = self.get_context_data(**kwargs)
         context['book'] = book
         ebooks = []
         lowest_price = None
-        for ebook in book.ebooks.all():
+        async for ebook in book.ebooks.all():
             ebook.logo = LOGOS[ebook.book_store]
             ebook.repr = STORE_NAME_REPR[ebook.book_store]
             if lowest_price is None or 0 < ebook.price < lowest_price:
