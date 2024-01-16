@@ -1,17 +1,37 @@
-from ebookFinder.settings.base import *
+import os
+from .base import *
 
-DEBUG = True
-
-# Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file':
-                os.path.join(DJANGO_ROOT, 'settings/local_database.conf'),
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
         },
-        'TEST': {
-            'NAME': 'ebookFinder_test'
+    },
+    "loggers": {
+        "django.db.backends": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+    },
+}
+
+import pymysql
+
+pymysql.install_as_MySQLdb()
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "ebook_moim",
+        "USER": "root",
+        "PASSWORD": "root",
+        "HOST": "mysql-ebook-moim",
+        "PORT": "3306",
+        "OPTIONS": {
+            "isolation_level": "READ COMMITTED"
         }
     }
 }
@@ -21,7 +41,4 @@ STATICFILES_DIRS = [
 ]
 
 ALLOWED_HOSTS = ['*', ]
-
-from ebookFinder import celeryconfig as CELERY_CONFIG
-from .secret_key import SECRET_KEY
 

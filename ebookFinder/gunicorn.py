@@ -4,8 +4,9 @@ from os import environ
 def max_workers():
     return cpu_count() * 2 + 1
 
-bind = "unix:/var/run/gunicorn/ebook-moim.socket"
-pidfile = "/var/run/gunicorn/ebook-moim.pid"
+# bind = "unix:/var/run/gunicorn/ebook-moim.socket"
+# pidfile = "/var/run/gunicorn/ebook-moim.pid"
+bind = '0.0.0.0:8000'
 backlog = 2048
 worker_connection = 1000
 worker_class = 'gevent'

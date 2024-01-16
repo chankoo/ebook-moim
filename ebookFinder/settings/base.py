@@ -1,19 +1,18 @@
-# -*- coding:utf-8 -*-
-
 import pymysql
 pymysql.install_as_MySQLdb()
 
-import os
-from os.path import abspath, basename, dirname, join, normpath
+from os.path import basename, dirname, join, normpath
+from pathlib import Path
+
 from sys import path
 from django.core.exceptions import ImproperlyConfigured
 
 
 # 경로 설정
-DJANGO_ROOT = dirname(dirname(abspath(__file__)))
+DJANGO_ROOT = str(Path(__file__).resolve().parent.parent.parent)
+path.append(DJANGO_ROOT)
 SITE_ROOT = dirname(DJANGO_ROOT)
 SITE_NAME = basename(DJANGO_ROOT)
-path.append(DJANGO_ROOT)
 # 경로 설정 끝
 
 # 디버깅 환경 설정

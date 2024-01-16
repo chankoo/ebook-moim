@@ -2,5 +2,4 @@ from django.apps import AppConfig
 
 
 class BookConfig(AppConfig):
-    name = 'book'
-
+    name = 'ebookFinder.apps.book'

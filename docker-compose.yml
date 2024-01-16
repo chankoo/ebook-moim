@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  mysql-ebook-moim:
+    build:
+      context: ./db/ebook_moim/
+    container_name: mysql-ebook-moim
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./db/ebook_moim/mysql-init-files/:/docker-entrypoint-initdb.d/
+      - ./db/ebook_moim/mysql-confs/:/etc/mysql/conf.d/
+      - mysql-ebook-moim-storage:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 0s
+  ebook-moim:
+    build:
+      context: ./ebookFinder/
+    container_name: ebook-moim
+    volumes:
+      - ./ebookFinder:/ebook_moim/ebookFinder
+    ports:
+      - "8000:8000"
+    entrypoint:
+      [ "/ebook_moim/ebookFinder/docker-entrypoint.sh" ]
+    depends_on:
+      mysql-ebook-moim:
+        condition: service_healthy
+  redis-ebook-moim:
+    image: redis:latest
+    container_name: redis-ebook-moim
+    ports:
+      - '6379:6379'
+volumes:
+  mysql-ebook-moim-storage: {}

@@ -11,7 +11,7 @@ if os.path.isfile("./config.json"):
 
 
 def main():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', f"ebookFinder.settings.{config.get('env', 'local')}")
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', f"settings.{config.get('env', 'local')}")
     from django.core.management import execute_from_command_line
     execute_from_command_line(sys.argv)
 
