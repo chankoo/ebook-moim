@@ -97,10 +97,10 @@ class BookDetailView(TemplateView):
             finally:
                 for info in infos:
                     ebook, created = await Ebook.objects.aget_or_create(book=book,
-                                                                 book_store=info['book_store'])
-                    ebook.url = info['url']
-                    ebook.deeplink = info['deeplink']
-                    ebook.price = info['price']
+                                                                 book_store=info.get('book_store', ''))
+                    ebook.url = info.get('url', '')
+                    ebook.deeplink = info.get('deeplink', '')
+                    ebook.price = info.get('price', 0)
                     await ebook.asave()
                     # Ebook 상품 상세페이지 데이터 비동기로 저장
                     save_ebook_raw.apply_async((info['url'], ebook.id), countdown=1)
@@ -112,8 +112,8 @@ class BookDetailView(TemplateView):
         ebooks = []
         lowest_price = None
         async for ebook in book.ebooks.all():
-            ebook.logo = LOGOS[ebook.book_store]
-            ebook.repr = STORE_NAME_REPR[ebook.book_store]
+            ebook.logo = LOGOS.get(ebook.book_store, '')
+            ebook.repr = STORE_NAME_REPR.get(ebook.book_store, '')
             if lowest_price is None or 0 < ebook.price < lowest_price:
                 lowest_price = ebook.price
             ebooks.append(ebook)

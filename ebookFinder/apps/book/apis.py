@@ -1,3 +1,4 @@
+import asyncio
 import httpx
 import urllib.parse
 from bs4 import BeautifulSoup
@@ -53,26 +54,38 @@ async def get_book_info(isbn) -> dict:
     return res[0]
 
 
+async def get_ebooks_info(isbn) -> list:
+    if '-' in isbn:
+        isbns = isbn.split('-')
+    else:
+        raise ValueError('Invalid isbn!')
+
+    headers = {
+        'User-agent': USER_AGENT,
+    }
+
+    result = []
+    tasks = [asyncio.create_task(get_ebook_info(isbns, headers, STORE)) for STORE in BOOK_STORES]
+    result = [res for res in await asyncio.gather(*tasks) if res]
+    return result
+
+
 async def get_ebook_info(isbns, headers, store) -> dict:
     result = {}
     base = store['domain'] + store['base']
     good = None
 
-    for isbn in isbns:
-        params = {store['param_key']: isbn}
-        query = urllib.parse.urlencode(params)
-        url = "?".join([base, query])
+    params_list = [{store['param_key']: isbn} for isbn in isbns]
+    query_list = [urllib.parse.urlencode(params) for params in params_list]
+    url_list = ["?".join([base, query]) for query in query_list]
 
-        async with httpx.AsyncClient() as client:
-            res = await client.get(url, headers=headers)
-            soup = BeautifulSoup(res.text, 'html.parser')
-            good = soup.select_one(
-                store['good_selector']
-            )
-        if good:
-            break
-    if good is None:
+    tasks = [asyncio.create_task(get_good(url, store, headers)) for url in url_list]
+    goods = await asyncio.gather(*tasks)
+    
+    if not any(goods):
         return result
+    
+    good = goods[0] or goods[1]
 
     links = good.select('a')
     res = None
@@ -96,23 +109,14 @@ async def get_ebook_info(isbns, headers, store) -> dict:
         result['price'] = int(price_str) if price_str else 0
     return result
 
-
-async def get_ebooks_info(isbn) -> list:
-    if '-' in isbn:
-        isbns = isbn.split('-')
-    else:
-        raise ValueError('Invalid isbn!')
-
-    headers = {
-        'User-agent': USER_AGENT,
-    }
-
-    result = []
-    for STORE in BOOK_STORES:
-        info = await get_ebook_info(isbns, headers, STORE)
-        if info:
-            result.append(info)
-    return result
+async def get_good(url: str, store: dict, headers: dict = None):
+    async with httpx.AsyncClient() as client:
+        res = await client.get(url, headers=headers)
+        soup = BeautifulSoup(res.text, 'html.parser')
+        good = soup.select_one(
+                store['good_selector']
+            )
+    return good
 
 
 async def get_deeplink(url) -> str:
