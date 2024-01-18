@@ -54,7 +54,7 @@ async def get_book_info(isbn) -> dict:
     return res[0]
 
 
-async def get_ebooks_info(isbn) -> list:
+async def get_ebooks_info(isbn: str) -> list:
     if '-' in isbn:
         isbns = isbn.split('-')
     else:
@@ -70,10 +70,9 @@ async def get_ebooks_info(isbn) -> list:
     return result
 
 
-async def get_ebook_info(isbns, headers, store) -> dict:
+async def get_ebook_info(isbns: list, headers: dict, store: dict) -> dict:
     result = {}
     base = store['domain'] + store['base']
-    good = None
 
     params_list = [{store['param_key']: isbn} for isbn in isbns]
     query_list = [urllib.parse.urlencode(params) for params in params_list]
@@ -85,28 +84,35 @@ async def get_ebook_info(isbns, headers, store) -> dict:
     if not any(goods):
         return result
     
-    good = goods[0] or goods[1]
+    good = goods[0] or goods[1] or None
 
-    links = good.select('a')
-    res = None
-    for a in links:
-        if a.string is None:
-            for s in a.stripped_strings:
-                if s == store['keyword']:
-                    res = a
+    link_element = good.select_one(store['link_selector']) if 'link_selector' in store else good.find('a', text=store['keyword'])
 
-    if res is None:
-        res = good.find('a', {'title': store['keyword']})
+    if link_element is None:
+        links = good.select('a')
+        for a in links:
+            if a.string is None:
+                for s in a.stripped_strings:
+                    if s == store['keyword']:
+                        link_element = a
+    
+    if link_element is None:
+        link_element = good.find('a', {'title': store['keyword']})
 
-    if res:
-        href = res.get('href', '') if res else ''
+    if link_element:
+        href = link_element.get('href', '') if link_element else ''
         store_url = store['domain']
         result['book_store'] = store['name']
         url = store_url + href if 'http' not in href else href
         result['url'] = url
         result['deeplink'] = await get_deeplink(url)
-        price_str = res.text.split('원')[0].replace(store['keyword'], '').replace(',', '').strip()
-        result['price'] = int(price_str) if price_str else 0
+
+        price_element = link_element.parent
+        price_str = price_element.text.split('원')[0].split(' ')[-1].replace(',', '').strip()
+        try:
+            result['price'] = int(price_str) if price_str else 0
+        except ValueError:
+            result['price'] = 0
     return result
 
 async def get_good(url: str, store: dict, headers: dict = None):
