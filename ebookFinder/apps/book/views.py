@@ -5,7 +5,7 @@ from django.db import DataError
 from django.contrib import messages
 
 from ebookFinder.apps.book.models import Book, Ebook
-from ebookFinder.apps.book.tasks import save_ebook_raw
+# from ebookFinder.apps.book.tasks import save_ebook_raw
 from ebookFinder.apps.book.apis import search_books, get_book_info, get_ebooks_info
 from ebookFinder.apps.book.consts import LOGOS, STORE_NAME_REPR
 from ebookFinder.apps.utils.eb_datetime import tz_now
@@ -90,22 +90,19 @@ class BookDetailView(TemplateView):
                 raise Http404(str(e))
 
         if book.need_ebook_update:
-            try:
-                infos = await get_ebooks_info(book.isbn)
-            except ValueError:
-                infos = []
-            finally:
-                for info in infos:
-                    ebook, created = await Ebook.objects.aget_or_create(book=book,
-                                                                 book_store=info.get('book_store', ''))
-                    ebook.url = info.get('url', '')
-                    ebook.deeplink = info.get('deeplink', '')
-                    ebook.price = info.get('price', 0)
-                    await ebook.asave()
-                    # Ebook 상품 상세페이지 데이터 비동기로 저장
-                    save_ebook_raw.apply_async((info['url'], ebook.id), countdown=1)
-                book.date_searched = tz_now().date()
-                await book.asave()
+            infos = []
+            infos = await get_ebooks_info(isbn=book.isbn, title=book.title)
+            for info in infos:
+                ebook, created = await Ebook.objects.aget_or_create(book=book,
+                                                                book_store=info.get('book_store', ''))
+                ebook.url = info.get('url', '')
+                ebook.deeplink = info.get('deeplink', '')
+                ebook.price = info.get('price', 0)
+                await ebook.asave()
+                # Ebook 상품 상세페이지 데이터 비동기로 저장
+                # save_ebook_raw.apply_async((info['url'], ebook.id), countdown=1)
+            book.date_searched = tz_now().date()
+            await book.asave()
 
         context = self.get_context_data(**kwargs)
         context['book'] = book

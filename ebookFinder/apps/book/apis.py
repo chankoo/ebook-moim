@@ -54,7 +54,7 @@ async def get_book_info(isbn) -> dict:
     return res[0]
 
 
-async def get_ebooks_info(isbn: str) -> list:
+async def get_ebooks_info(isbn: str, title: str) -> list:
     if '-' in isbn:
         isbns = isbn.split('-')
     else:
@@ -65,16 +65,16 @@ async def get_ebooks_info(isbn: str) -> list:
     }
 
     result = []
-    tasks = [asyncio.create_task(get_ebook_info(isbns, headers, STORE)) for STORE in BOOK_STORES]
+    tasks = [asyncio.create_task(get_ebook_info(isbns, headers, title, STORE)) for STORE in BOOK_STORES]
     result = [res for res in await asyncio.gather(*tasks) if res]
     return result
 
 
-async def get_ebook_info(isbns: list, headers: dict, store: dict) -> dict:
+async def get_ebook_info(isbns: list, headers: dict, title:str, store: dict) -> dict:
     result = {}
     base = store['domain'] + store['base']
 
-    params_list = [{store['param_key']: isbn} for isbn in isbns]
+    params_list = [{store['param_key']: isbn} for isbn in isbns + [title]]
     query_list = [urllib.parse.urlencode(params) for params in params_list]
     url_list = ["?".join([base, query]) for query in query_list]
 
@@ -84,10 +84,12 @@ async def get_ebook_info(isbns: list, headers: dict, store: dict) -> dict:
     if not any(goods):
         return result
     
-    good = goods[0] or goods[1] or None
-
+    while goods:
+        good = goods.pop()
+        if good:
+            break
+    
     link_element = good.select_one(store['link_selector']) if 'link_selector' in store else good.find('a', text=store['keyword'])
-
     if link_element is None:
         links = good.select('a')
         for a in links:
@@ -119,9 +121,17 @@ async def get_good(url: str, store: dict, headers: dict = None):
     async with httpx.AsyncClient() as client:
         res = await client.get(url, headers=headers)
         soup = BeautifulSoup(res.text, 'html.parser')
+        
         good = soup.select_one(
-                store['good_selector']
-            )
+            store['good_selector']
+        )
+        if good is None:
+            # ridi
+            import json
+            data = json.loads(soup.text)
+            good = data[store['good_selector']][0] if data[store['good_selector']] else None
+            if good:
+                good = BeautifulSoup(f"<li><a href=https://ridibooks.com/books/{good['b_id']}>{good['price']}</li>", 'html.parser')
     return good
 
 

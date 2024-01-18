@@ -83,6 +83,8 @@ class Book(models.Model):
 
     @property
     def need_ebook_update(self):
+        if settings.DEBUG:
+            return True
         if self.date_searched is None:
             return True
         return self.date_searched + datetime.timedelta(days=30) < tz_now().date()

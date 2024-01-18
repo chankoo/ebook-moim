@@ -5,6 +5,16 @@ AFFILIATE_API_ENDPOINT = 'https://api.linkprice.com/ci/service/custom_link_xml'
 AFFILIATE_ID = 'A100670817'
 BOOK_STORES = [
     {
+        'name': 'ridi',
+        'name_repr': 'RIDI',
+        'domain': 'https://ridibooks.com',
+        'base': '/api/search-api/search',
+        'good_selector': 'books',
+        'param_key': 'keyword',
+        'keyword': '',
+        'logo': '/static/img/logo_ridi.png',
+    },
+    {
         'name': 'yes24',
         'name_repr': 'YES24',
         'domain': 'https://www.yes24.com',
@@ -46,6 +56,7 @@ BOOK_STORES = [
 ]
 
 LOGOS = {
+    'ridi': '/static/img/logo_ridi.png',
     'yes24': '/static/img/logo_yes24.png',
     'interpark': '/static/img/logo_interpark.jpg',
     'kyobobook': '/static/img/logo_kyobobook.png',
@@ -53,6 +64,7 @@ LOGOS = {
 }
 
 STORE_NAME_REPR = {
+    'ridi': '리디',
     'yes24': 'YES24',
     'interpark': '인터파크 도서',
     'kyobobook': '교보문고',
