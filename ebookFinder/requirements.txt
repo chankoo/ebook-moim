@@ -39,3 +39,6 @@ zipp
 cryptography
 uvicorn
 httpx
+pytest
+pytest-asyncio
+faker

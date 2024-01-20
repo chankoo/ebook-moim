@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USER_AGENT, \
     BOOK_STORES, AFFILIATE_API_ENDPOINT, AFFILIATE_ID
 
-async def search_books(q) -> dict:
+async def get_kakao_search(q):
     headers = {
         'User-agent': USER_AGENT,
         'referer': '',
@@ -18,15 +18,15 @@ async def search_books(q) -> dict:
 
     async with httpx.AsyncClient() as client:
         res = await client.get(api_url, headers=headers)
-        if res.status_code != 200:
-            res.raise_for_status()
-        res = res.json()
-        books_meta = res.get('meta', {})
-        books = res.get('documents', [])
+    return res
 
+
+async def search_books(q) -> dict:
+    res = await get_kakao_search(q)
+    res = res.json()
     return {
-        'books_meta': books_meta,
-        'books': books,
+        'books_meta': res.get('meta', {}),
+        'books': res.get('documents', []),
     }
 
 
