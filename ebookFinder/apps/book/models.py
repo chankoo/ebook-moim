@@ -4,9 +4,11 @@ import datetime
 
 from django.db import models
 from django.conf import settings
+from django.db import DataError
 
 from ebookFinder.apps.utils.eb_datetime import tz_now
 from ebookFinder.settings.base import SERVICE_DOMAIN
+from ebookFinder.apps.book.schemas import KakaoBook
 
 
 class Book(models.Model):
@@ -93,6 +95,23 @@ class Book(models.Model):
     def absolute_url(self):
         domain = '' if settings.DEBUG else settings.SERVICE_DOMAIN
         return '{domain}/book/{isbn}'.format(domain=domain, isbn=self.isbn)
+    
+    async def update_from_api(self, book: KakaoBook):
+        fields_to_update = [field.name for field in self._meta.fields if field.name in book.model_dump()]
+        for field_name in fields_to_update:
+            setattr(self, field_name, getattr(book, field_name))
+        
+        self.isbn = book.isbn.replace(' ', '-')
+        self.authors = ', '.join(book.authors)
+        self.date_publish = book.datetime.split('T')[0]
+        self.translators = ', '.join(book.translators)
+        self.sell_status = book.status
+    
+        try:
+            await self.asave()
+        except DataError as e:
+            await self.adelete()
+            raise e
 
 
 class Ebook(models.Model):
