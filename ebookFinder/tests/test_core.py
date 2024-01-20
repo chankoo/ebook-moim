@@ -7,11 +7,13 @@ from ebookFinder.apps.book.apis import search_books, get_book_info, get_ebooks_i
 from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USER_AGENT, \
     BOOK_STORES, AFFILIATE_API_ENDPOINT, AFFILIATE_ID
 from ebookFinder.apps.book.schemas import KakaoBook
+from ebookFinder.apps.book.utils import get_valid_isbn
 
 fake = faker.Faker('ko-KR')
 
 
 VALID_ISBN = '8968484694-9788968484698'
+
 
 @pytest.mark.asyncio
 async def test_search_books():
@@ -25,7 +27,7 @@ async def test_search_books():
 
 @pytest.mark.asyncio
 async def test_get_book_info_valid():
-    isbn = VALID_ISBN.split('-')[0]
+    isbn = get_valid_isbn(VALID_ISBN)
     info = await get_book_info(isbn)
     assert type(info) == dict
     KakaoBook(**info)
