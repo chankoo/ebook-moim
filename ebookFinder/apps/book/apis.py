@@ -2,6 +2,10 @@ import asyncio
 import httpx
 import urllib.parse
 from bs4 import BeautifulSoup
+
+from django.http import Http404
+from django.core.exceptions import ObjectDoesNotExist
+
 from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USER_AGENT, \
     BOOK_STORES, AFFILIATE_API_ENDPOINT, AFFILIATE_ID
 
@@ -30,7 +34,7 @@ async def search_books(q) -> dict:
     }
 
 
-async def get_book_info(isbn) -> dict:
+async def get_kakao_book(isbn: str):
     headers = {
         'User-agent': USER_AGENT,
         'referer': '',
@@ -45,12 +49,16 @@ async def get_book_info(isbn) -> dict:
         res = await client.get(api_url, headers=headers)
         if res.status_code != 200:
             res.raise_for_status()
+    return res
 
-        res = res.json().get('documents')
-        if res is None:
-            raise ValueError('Search API not working')
-        elif not res:
-            raise ValueError('Can not find isbn')
+async def get_book_info(isbn: str) -> dict:
+    res = await get_kakao_book(isbn)
+    res = res.json().get('documents')
+    
+    if res is None:
+        raise Exception('Search API not working')
+    elif not res:
+        raise ObjectDoesNotExist('Can not find isbn')
     return res[0]
 
 
