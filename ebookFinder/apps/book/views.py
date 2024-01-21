@@ -14,7 +14,6 @@ from ebookFinder.apps.log.models import SearchHistory
 from ebookFinder.apps.book.schemas import KakaoBook
 from ebookFinder.apps.book.utils import get_valid_isbn
 
-
 class IndexView(TemplateView):
     template_name = 'book/index.html'
 
@@ -57,7 +56,6 @@ class BookListAPIView(TemplateView):
         return self.render_to_response(context=context)
 
 
-
 class BookDetailView(TemplateView):
     template_name = 'book/detail.html'
 
@@ -90,6 +88,7 @@ class BookDetailView(TemplateView):
         if book.need_ebook_update:
             infos = []
             infos = await get_ebooks_info(isbn=book.isbn, title=book.title)
+
             for info in infos:
                 ebook, created = await Ebook.objects.aget_or_create(book=book,
                                                                 book_store=info.get('book_store', ''))

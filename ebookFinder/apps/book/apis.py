@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USER_AGENT, \
     BOOK_STORES, AFFILIATE_API_ENDPOINT, AFFILIATE_ID
 
-async def get_kakao_search(q):
+async def get_kakao_search(q) -> httpx.Response:
     headers = {
         'User-agent': USER_AGENT,
         'referer': '',
@@ -34,7 +34,7 @@ async def search_books(q) -> dict:
     }
 
 
-async def get_kakao_book(isbn: str):
+async def get_kakao_book(isbn: str) -> httpx.Response:
     headers = {
         'User-agent': USER_AGENT,
         'referer': '',
@@ -79,6 +79,9 @@ async def get_ebooks_info(isbn: str, title: str) -> list:
 
 
 async def get_ebook_info(isbns: list, headers: dict, title:str, store: dict) -> dict:
+    """
+    스토어 상품에서 ebook 정보를 가져옴
+    """
     result = {}
     base = store['domain'] + store['base']
 
@@ -125,25 +128,38 @@ async def get_ebook_info(isbns: list, headers: dict, title:str, store: dict) -> 
             result['price'] = 0
     return result
 
-async def get_good(url: str, store: dict, headers: dict = None):
+async def get_good(url: str, store: dict, headers: dict = None) -> BeautifulSoup | None:
+    """
+    스토어 리스트에서 검색하여 첫번째 상품 정보를 가져옴
+    """
     async with httpx.AsyncClient() as client:
-        res = await client.get(url, headers=headers)
-        soup = BeautifulSoup(res.text, 'html.parser')
-        
-        good = soup.select_one(
-            store['good_selector']
-        )
-        if good is None:
-            # ridi
-            import json
-            data = json.loads(soup.text)
+        res = await client.get(url, headers=headers, timeout=20)  # cancellation 우회(aladin)
+        if 'json' in res.headers['content-type']:
+            data = res.json()
             good = data[store['good_selector']][0] if data[store['good_selector']] else None
             if good:
-                good = BeautifulSoup(f"<li><a href=https://ridibooks.com/books/{good['b_id']}>{good['price']}</li>", 'html.parser')
+                good = await create_dummy_bs_tag(good, store)
+        else:
+            soup = BeautifulSoup(res.text, 'html.parser')
+            good = soup.select_one(
+                store['good_selector']
+            )
     return good
 
 
-async def get_deeplink(url) -> str:
+async def create_dummy_bs_tag(good: dict, store: dict) -> BeautifulSoup:
+    """
+    json 형태의 상품 정보를 BeautifulSoup 태그로 변환
+    """
+    good["b_id"]
+    good = BeautifulSoup(f"<li><a href={store['link_format'] % good[store['link_id_name']]}>{good['price']}</li>", 'html.parser')
+    return good
+
+
+async def get_deeplink(url: str) -> str:
+    """
+    스토어 url을 받아서 제휴 사이트 딥링크를 생성
+    """
     params = {'a_id': AFFILIATE_ID, 'url': url, 'mode': 'json'}
     query = urllib.parse.urlencode(params)
     api_url = AFFILIATE_API_ENDPOINT + "?" + query

@@ -13,6 +13,8 @@ BOOK_STORES = [
         'param_key': 'keyword',
         'keyword': '',
         'logo': '/static/img/logo_ridi.png',
+        'link_format': 'https://ridibooks.com/books/%s',
+        'link_id_name': 'b_id',
     },
     {
         'name': 'yes24',
