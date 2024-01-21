@@ -95,23 +95,27 @@ class Book(models.Model):
     def absolute_url(self):
         domain = '' if settings.DEBUG else settings.SERVICE_DOMAIN
         return '{domain}/book/{isbn}'.format(domain=domain, isbn=self.isbn)
-    
+
     async def update_from_api(self, book: KakaoBook):
-        fields_to_update = [field.name for field in self._meta.fields if field.name in book.model_dump()]
-        for field_name in fields_to_update:
-            setattr(self, field_name, getattr(book, field_name))
-        
-        self.isbn = book.isbn.replace(' ', '-')
-        self.authors = ', '.join(book.authors)
-        self.date_publish = book.datetime.split('T')[0]
-        self.translators = ', '.join(book.translators)
-        self.sell_status = book.status
-    
+        book_dict = await self.arrage_book_data(book)
+        for field_name, val in book_dict.items():
+            setattr(self, field_name, val)
+
         try:
             await self.asave()
         except DataError as e:
             await self.adelete()
             raise e
+        
+    @staticmethod
+    async def arrage_book_data(book: KakaoBook) -> dict:
+        book_dict = book.model_dump()
+        book_dict['isbn'] = book_dict['isbn'].replace(' ', '-')
+        book_dict['authors'] = ', '.join(book_dict['authors'])
+        book_dict['translators'] = ', '.join(book_dict['translators'])
+        book_dict['date_publish'] = book_dict.pop('datetime').date()
+        book_dict['sell_status'] = book_dict.pop('status')
+        return book_dict
 
 
 class Ebook(models.Model):

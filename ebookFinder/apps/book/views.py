@@ -1,5 +1,5 @@
 from django.views.generic.base import TemplateView
-from django.http import HttpResponseRedirect, Http404, HttpResponseBadRequest
+from django.http import HttpResponseRedirect, Http404, HttpResponseBadRequest, HttpResponseServerError
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
@@ -40,10 +40,9 @@ class BookListView(TemplateView):
             result = await search_books(q)
             context.update(result)
         except Exception as e:
-            raise e
             messages.error(request, '책검색 API가 일시적으로 동작하지 않습니다.\n'
                                     '잠시 후에 다시 시도해주세요.\n{msg} :('.format(msg=str(e)))
-            return HttpResponseRedirect('/book/')
+            return HttpResponseServerError(e)
         return self.render_to_response(context=context)
 
 
@@ -81,12 +80,12 @@ class BookDetailView(TemplateView):
             try:
                 kakao_book = KakaoBook(**info)
             except (TypeError, ValidationError) as e:
-                raise HttpResponseBadRequest(str(e))
+                raise HttpResponseBadRequest(e)
             
             try:
                 await book.update_from_api(book=kakao_book)
             except Exception as e:
-                raise Http404(str(e))
+                raise HttpResponseServerError(e)
 
         if book.need_ebook_update:
             infos = []

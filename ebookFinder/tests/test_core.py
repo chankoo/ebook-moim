@@ -1,13 +1,13 @@
 import pytest
 import faker
-
-from django.core.exceptions import ObjectDoesNotExist
+import datetime
 
 from ebookFinder.apps.book.apis import search_books, get_book_info, get_ebooks_info
 from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USER_AGENT, \
     BOOK_STORES, AFFILIATE_API_ENDPOINT, AFFILIATE_ID
 from ebookFinder.apps.book.schemas import KakaoBook
 from ebookFinder.apps.book.utils import get_valid_isbn
+from ebookFinder.apps.book.models import Book
 
 fake = faker.Faker('ko-KR')
 
@@ -32,3 +32,17 @@ async def test_get_book_info_valid():
     assert type(info) == dict
     KakaoBook(**info)
 
+
+@pytest.mark.asyncio
+async def test_arrage_book_data():
+    isbn = get_valid_isbn(VALID_ISBN)
+    info = await get_book_info(isbn)
+    assert type(info) == dict
+    kakao_book = KakaoBook(**info)
+    book_data = await Book.arrage_book_data(kakao_book)
+    assert ' ' not in book_data['isbn']
+    assert type(book_data) == dict
+    assert isinstance(book_data['date_publish'], datetime.date)
+    assert 'datetime' not in book_data
+    assert isinstance(book_data['sell_status'], str)
+    assert 'status' not in book_data
