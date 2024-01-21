@@ -7,7 +7,7 @@ from pydantic import ValidationError
 
 from ebookFinder.apps.book.models import Book, Ebook
 # from ebookFinder.apps.book.tasks import save_ebook_raw
-from ebookFinder.apps.book.apis import search_books, get_book_info, get_ebooks_info
+from ebookFinder.apps.book.services import search_books, get_book_info, get_ebooks_info
 from ebookFinder.apps.book.consts import LOGOS, STORE_NAME_REPR
 from ebookFinder.apps.utils.eb_datetime import tz_now
 from ebookFinder.apps.log.models import SearchHistory

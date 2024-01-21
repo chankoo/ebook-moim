@@ -2,9 +2,7 @@ import pytest
 import faker
 import datetime
 
-from ebookFinder.apps.book.apis import search_books, get_book_info, get_ebooks_info
-from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USER_AGENT, \
-    BOOK_STORES, AFFILIATE_API_ENDPOINT, AFFILIATE_ID
+from ebookFinder.apps.book.services import search_books, get_book_info
 from ebookFinder.apps.book.schemas import KakaoBook
 from ebookFinder.apps.book.utils import get_valid_isbn
 from ebookFinder.apps.book.models import Book
