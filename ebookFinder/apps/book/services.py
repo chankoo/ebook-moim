@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USER_AGENT, \
     BOOK_STORES, AFFILIATE_API_ENDPOINT, AFFILIATE_ID
-from ebookFinder.apps.book.schemas import Ebook
+from ebookFinder.apps.book import schemas
 
 
 async def search_books(q) -> dict:
@@ -33,7 +33,7 @@ async def get_book_info(isbn: str) -> dict:
     return res[0]
 
 
-async def get_ebooks_info(isbn: str, title: str) -> list[Ebook]:
+async def get_ebooks_info(isbn: str, title: str) -> list[schemas.Ebook]:
     if '-' in isbn:
         isbns = isbn.split('-')
     else:
@@ -119,7 +119,7 @@ class ScrapEbook(object):
                 res.raise_for_status()
         return res
     
-    async def get_ebook_info(self, isbns: list, title:str, store: dict) -> Ebook:
+    async def get_ebook_info(self, isbns: list, title:str, store: dict) -> schemas.Ebook:
         """
         스토어 상품에서 ebook 정보를 가져옴
         """
@@ -169,7 +169,7 @@ class ScrapEbook(object):
             link_element = good.find('a', {'title': store['keyword']})
         return link_element
     
-    async def get_ebook_detail(self, link_element: Tag, store: dict) -> Ebook:
+    async def get_ebook_detail(self, link_element: Tag, store: dict) -> schemas.Ebook:
         """
         ebook 링크 태그에서 상세 정보를 추출
         """
@@ -187,7 +187,7 @@ class ScrapEbook(object):
             res['price'] = int(price_str) if price_str else 0
         except ValueError:
             res['price'] = 0
-        return Ebook(**res)
+        return schemas.Ebook(**res)
 
     async def get_good(self, url: str, store: dict) -> Tag | None:
         """

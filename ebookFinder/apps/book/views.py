@@ -91,20 +91,7 @@ class BookDetailView(TemplateView):
         if book.need_ebook_update:
             data = []
             data = await get_ebooks_info(isbn=book.isbn, title=book.title)
-
-            for info in data:
-                ebook, created = await Ebook.objects.aget_or_create(
-                    book=book, 
-                    book_store=info.book_store,
-                )
-                ebook.url = info.url
-                ebook.deeplink = info.deeplink
-                ebook.price = info.price
-                await ebook.asave()
-                # Ebook 상품 상세페이지 데이터 비동기로 저장
-                # save_ebook_raw.apply_async((info['url'], ebook.id), countdown=1)
-            book.date_searched = tz_now().date()
-            await book.asave()
+            await book.update_scrap_data(data=data)
 
         context = self.get_context_data(**kwargs)
         context['book'] = book

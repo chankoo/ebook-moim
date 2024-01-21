@@ -1,14 +1,12 @@
-# -*- coding:utf-8 -*-
-
 import datetime
+import asyncio
 
 from django.db import models
 from django.conf import settings
 from django.db import DataError
 
 from ebookFinder.apps.utils.eb_datetime import tz_now
-from ebookFinder.settings.base import SERVICE_DOMAIN
-from ebookFinder.apps.book.schemas import KakaoBook
+from ebookFinder.apps.book import schemas
 
 
 class Book(models.Model):
@@ -96,7 +94,7 @@ class Book(models.Model):
         domain = '' if settings.DEBUG else settings.SERVICE_DOMAIN
         return '{domain}/book/{isbn}'.format(domain=domain, isbn=self.isbn)
 
-    async def update_from_api(self, book: KakaoBook):
+    async def update_from_api(self, book: schemas.KakaoBook):
         book_dict = await self.arrage_book_data(book)
         for field_name, val in book_dict.items():
             setattr(self, field_name, val)
@@ -108,7 +106,7 @@ class Book(models.Model):
             raise e
         
     @staticmethod
-    async def arrage_book_data(book: KakaoBook) -> dict:
+    async def arrage_book_data(book: schemas.KakaoBook) -> dict:
         book_dict = book.model_dump()
         book_dict['isbn'] = book_dict['isbn'].replace(' ', '-')
         book_dict['authors'] = ', '.join(book_dict['authors'])
@@ -116,6 +114,30 @@ class Book(models.Model):
         book_dict['date_publish'] = book_dict.pop('datetime').date()
         book_dict['sell_status'] = book_dict.pop('status')
         return book_dict
+    
+    async def update_scrap_data(self, data: list[schemas.Ebook]):
+        await self.update_ebooks(data=data)
+        self.date_searched = tz_now().date()
+        await self.asave()
+
+    async def update_ebooks(self, data: list[schemas.Ebook]):
+        tasks = [asyncio.create_task(self.update_ebook(info)) for info in data]
+        await asyncio.gather(*tasks)
+
+    async def update_ebook(self, info: schemas.Ebook):
+        """
+        Ebook 객체를 생성하거나 업데이트
+        """
+        ebook, _ = await Ebook.objects.aget_or_create(
+            book=self, 
+            book_store=info.book_store,
+        )
+        ebook.url = info.url
+        ebook.deeplink = info.deeplink
+        ebook.price = info.price
+        await ebook.asave()
+        # Ebook 상품 상세페이지 데이터 비동기로 저장
+        # save_ebook_raw.apply_async((info['url'], ebook.id), countdown=1)
 
 
 class Ebook(models.Model):
