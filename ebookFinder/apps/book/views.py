@@ -26,16 +26,19 @@ class BookListView(TemplateView):
     template_name = 'book/list.html'
 
     async def get(self, request, *args, **kwargs):
+        context = {}
+        q = request.GET.get('q', '')
         try:
-            context = {}
-            q = request.GET.get('q', '')
             if request.session.session_key is None:
                 request.session.save()
             session_id = request.session.session_key
             if q:
                 await SearchHistory.objects.acreate(q=q, user_identifier=session_id)
+        except Exception as e:
+            pass
 
-            context['q'] = q
+        context['q'] = q
+        try:
             result = await search_books(q)
             context.update(result)
         except Exception as e:

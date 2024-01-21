@@ -18,6 +18,7 @@ async def search_books(q) -> dict:
         'books': res.get('documents', []),
     }
 
+
 async def get_book_info(isbn: str) -> dict:
     kakao = SearchBookKakao()
     res = await kakao.get_book(isbn)
@@ -37,59 +38,8 @@ async def get_ebooks_info(isbn: str, title: str) -> list:
         raise ValueError('Invalid isbn!')
 
     result = []
-    tasks = [asyncio.create_task(get_ebook_info(isbns, title, STORE)) for STORE in BOOK_STORES]
+    tasks = [asyncio.create_task(ScrapEbook().get_ebook_info(isbns, title, STORE)) for STORE in BOOK_STORES]
     result = [res for res in await asyncio.gather(*tasks) if res]
-    return result
-
-
-async def get_ebook_info(isbns: list, title:str, store: dict) -> dict:
-    """
-    스토어 상품에서 ebook 정보를 가져옴
-    """
-    result = {}
-    base = store['domain'] + store['base']
-
-    params_list = [{store['param_key']: isbn} for isbn in isbns + [title]]
-    query_list = [urllib.parse.urlencode(params) for params in params_list]
-    url_list = ["?".join([base, query]) for query in query_list]
-
-    tasks = [asyncio.create_task(ScrapEbook().get_good(url, store)) for url in url_list]
-    goods = await asyncio.gather(*tasks)
-    
-    if not any(goods):
-        return result
-    
-    while goods:
-        good = goods.pop()
-        if good:
-            break
-    
-    link_element = good.select_one(store['link_selector']) if 'link_selector' in store else good.find('a', text=store['keyword'])
-    if link_element is None:
-        links = good.select('a')
-        for a in links:
-            if a.string is None:
-                for s in a.stripped_strings:
-                    if s == store['keyword']:
-                        link_element = a
-    
-    if link_element is None:
-        link_element = good.find('a', {'title': store['keyword']})
-
-    if link_element:
-        href = link_element.get('href', '') if link_element else ''
-        store_url = store['domain']
-        result['book_store'] = store['name']
-        url = store_url + href if 'http' not in href else href
-        result['url'] = url
-        result['deeplink'] = await get_deeplink(url)
-
-        price_element = link_element.parent
-        price_str = price_element.text.split('원')[0].split(' ')[-1].replace(',', '').strip()
-        try:
-            result['price'] = int(price_str) if price_str else 0
-        except ValueError:
-            result['price'] = 0
     return result
 
 
@@ -166,8 +116,77 @@ class ScrapEbook(object):
             if res.status_code != 200:
                 res.raise_for_status()
         return res
-
     
+    async def get_ebook_info(self, isbns: list, title:str, store: dict) -> dict:
+        """
+        스토어 상품에서 ebook 정보를 가져옴
+        """
+        good = await self.get_valid_good(isbns, title, store)
+        link_element = await self.get_ebook_link(good, store)
+        if not link_element:
+            return {}
+
+        res = await self.get_ebook_detail(link_element, store)
+        return res
+    
+    async def get_valid_good(self, isbns: list, title:str, store: dict) -> BeautifulSoup | None:
+        """
+        스토어 리스트에서 검색 가능한 첫번째 상품 정보를 가져옴
+        """
+        base = store['domain'] + store['base']
+        params_list = [{store['param_key']: isbn} for isbn in isbns + [title]]
+        query_list = [urllib.parse.urlencode(params) for params in params_list]
+        url_list = ["?".join([base, query]) for query in query_list]
+
+        tasks = [asyncio.create_task(self.get_good(url, store)) for url in url_list]
+        goods = await asyncio.gather(*tasks)
+        
+        while goods:
+            good = goods.pop()
+            if good:
+                break
+        return good
+    
+    async def get_ebook_link(self, good: BeautifulSoup, store: dict) -> BeautifulSoup | None:
+        """
+        스토어 상품 태그에서 ebook 링크를 가져옴
+        """
+        if not good:
+            return None
+        
+        link_element = good.select_one(store['link_selector']) if 'link_selector' in store else good.find('a', text=store['keyword'])
+        if link_element is None:
+            links = good.select('a')
+            for a in links:
+                if a.string is None:
+                    for s in a.stripped_strings:
+                        if s == store['keyword']:
+                            link_element = a
+        
+        if link_element is None:
+            link_element = good.find('a', {'title': store['keyword']})
+        return link_element
+    
+    async def get_ebook_detail(self, link_element: BeautifulSoup, store: dict):
+        """
+        ebook 링크 태그에서 상세 정보를 추출
+        """
+        res = {}
+        href = link_element.get('href', '') if link_element else ''
+        store_url = store['domain']
+        res['book_store'] = store['name']
+        url = store_url + href if 'http' not in href else href
+        res['url'] = url
+        res['deeplink'] = await get_deeplink(url)
+
+        price_element = link_element.parent
+        price_str = price_element.text.split('원')[0].split(' ')[-1].replace(',', '').strip()
+        try:
+            res['price'] = int(price_str) if price_str else 0
+        except ValueError:
+            res['price'] = 0
+        return res
+
     async def get_good(self, url: str, store: dict) -> BeautifulSoup | None:
         """
         스토어 리스트에서 검색하여 첫번째 상품 정보를 가져옴
@@ -196,3 +215,4 @@ class ScrapEbook(object):
         good["b_id"]
         good = BeautifulSoup(f"<li><a href={store['link_format'] % good[store['link_id_name']]}>{good['price']}</li>", 'html.parser')
         return good
+    
