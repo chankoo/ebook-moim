@@ -14,7 +14,7 @@ BOOK_STORES = [
         'keyword': '',
         'logo': '/static/img/logo_ridi.png',
         'link_format': 'https://ridibooks.com/books/%s',
-        'link_id_name': 'b_id',
+        'link_id_name': 'b_id'
     },
     {
         'name': 'yes24',
@@ -44,7 +44,7 @@ BOOK_STORES = [
         'good_selector': 'li.prod_item',
         'param_key': 'keyword',
         'keyword': 'eBook',
-        'link_selector': 'a.btn_xxs.btn_pill.btn_line_gray:contains("eBook")',
+        'link_selector': 'a.btn_xxs.btn_pill.btn_line_gray:-soup-contains("eBook")',
     },
     {
         'name': 'aladin',

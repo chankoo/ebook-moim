@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, HttpUrl, field_validator, TypeAdapter
 
 
 class KakaoBook(BaseModel):
@@ -17,3 +17,19 @@ class KakaoBook(BaseModel):
     url: str
     contents: str
     status: str
+
+
+class Ebook(BaseModel):
+    """
+    Ebook 상품의 정보를 담는 모델
+    """
+    book_store: str
+    url: HttpUrl
+    deeplink: str = ''
+    price: int
+
+    @field_validator("deeplink")
+    def validate_deeplink(cls, value):
+        if value != "" and not TypeAdapter(HttpUrl).validate_python(value):
+            raise ValueError("Invalid URL")
+        return value

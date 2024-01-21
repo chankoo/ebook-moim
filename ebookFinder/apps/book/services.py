@@ -1,13 +1,15 @@
 import asyncio
 import httpx
 import urllib.parse
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 import urllib.parse
 
 from django.core.exceptions import ObjectDoesNotExist
 
 from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USER_AGENT, \
     BOOK_STORES, AFFILIATE_API_ENDPOINT, AFFILIATE_ID
+from ebookFinder.apps.book.schemas import Ebook
+
 
 async def search_books(q) -> dict:
     kakao = SearchBookKakao()
@@ -31,11 +33,11 @@ async def get_book_info(isbn: str) -> dict:
     return res[0]
 
 
-async def get_ebooks_info(isbn: str, title: str) -> list:
+async def get_ebooks_info(isbn: str, title: str) -> list[Ebook]:
     if '-' in isbn:
         isbns = isbn.split('-')
     else:
-        raise ValueError('Invalid isbn!')
+        isbns = [isbn]
 
     result = []
     tasks = [asyncio.create_task(ScrapEbook().get_ebook_info(isbns, title, STORE)) for STORE in BOOK_STORES]
@@ -117,7 +119,7 @@ class ScrapEbook(object):
                 res.raise_for_status()
         return res
     
-    async def get_ebook_info(self, isbns: list, title:str, store: dict) -> dict:
+    async def get_ebook_info(self, isbns: list, title:str, store: dict) -> Ebook:
         """
         스토어 상품에서 ebook 정보를 가져옴
         """
@@ -129,7 +131,7 @@ class ScrapEbook(object):
         res = await self.get_ebook_detail(link_element, store)
         return res
     
-    async def get_valid_good(self, isbns: list, title:str, store: dict) -> BeautifulSoup | None:
+    async def get_valid_good(self, isbns: list, title:str, store: dict) -> Tag | None:
         """
         스토어 리스트에서 검색 가능한 첫번째 상품 정보를 가져옴
         """
@@ -147,14 +149,14 @@ class ScrapEbook(object):
                 break
         return good
     
-    async def get_ebook_link(self, good: BeautifulSoup, store: dict) -> BeautifulSoup | None:
+    async def get_ebook_link(self, good: Tag | None, store: dict) -> Tag | None:
         """
         스토어 상품 태그에서 ebook 링크를 가져옴
         """
         if not good:
             return None
         
-        link_element = good.select_one(store['link_selector']) if 'link_selector' in store else good.find('a', text=store['keyword'])
+        link_element = good.select_one(store['link_selector']) if 'link_selector' in store else good.find('a', string=store['keyword'])
         if link_element is None:
             links = good.select('a')
             for a in links:
@@ -167,7 +169,7 @@ class ScrapEbook(object):
             link_element = good.find('a', {'title': store['keyword']})
         return link_element
     
-    async def get_ebook_detail(self, link_element: BeautifulSoup, store: dict):
+    async def get_ebook_detail(self, link_element: Tag, store: dict) -> Ebook:
         """
         ebook 링크 태그에서 상세 정보를 추출
         """
@@ -185,9 +187,9 @@ class ScrapEbook(object):
             res['price'] = int(price_str) if price_str else 0
         except ValueError:
             res['price'] = 0
-        return res
+        return Ebook(**res)
 
-    async def get_good(self, url: str, store: dict) -> BeautifulSoup | None:
+    async def get_good(self, url: str, store: dict) -> Tag | None:
         """
         스토어 리스트에서 검색하여 첫번째 상품 정보를 가져옴
         """
@@ -208,7 +210,7 @@ class ScrapEbook(object):
         return good
 
     @staticmethod
-    async def create_dummy_bs_tag(good: dict, store: dict) -> BeautifulSoup:
+    async def create_dummy_bs_tag(good: dict, store: dict) -> Tag:
         """
         json 형태의 상품 정보를 BeautifulSoup 태그로 변환
         """
