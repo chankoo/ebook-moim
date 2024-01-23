@@ -1,12 +1,11 @@
-from django.views.generic.base import TemplateView
-from django.http import HttpResponseRedirect, Http404, HttpResponseBadRequest, HttpResponseServerError
-from django.core.exceptions import ObjectDoesNotExist
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib import messages
 from pydantic import ValidationError
 
-from ebookFinder.apps.book.models import Book, Ebook
-# from ebookFinder.apps.book.tasks import save_ebook_raw
+from django.views.generic.base import TemplateView
+from django.http import Http404, HttpResponseBadRequest, HttpResponseServerError
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
+
+from ebookFinder.apps.book.models import Book
 from ebookFinder.apps.book.services import search_books, get_book_info, get_ebooks_info
 from ebookFinder.apps.book.consts import LOGOS, STORE_NAME_REPR
 from ebookFinder.apps.utils.eb_datetime import tz_now
