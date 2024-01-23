@@ -87,7 +87,7 @@ class BookDetailView(TemplateView):
             except Exception as e:
                 raise HttpResponseServerError(e)
 
-        if book.need_ebook_update:
+        if book.need_ebook_update():
             data = []
             data = await get_ebooks_info(isbn=book.isbn, title=book.title)
             await book.update_scrap_data(data=data)

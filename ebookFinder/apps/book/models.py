@@ -81,7 +81,6 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
-    @property
     def need_ebook_update(self):
         if settings.DEBUG:
             return True
@@ -89,9 +88,8 @@ class Book(models.Model):
             return True
         return self.date_searched + datetime.timedelta(days=30) < tz_now().date()
 
-    @property
-    def absolute_url(self):
-        domain = '' if settings.DEBUG else settings.SERVICE_DOMAIN
+    def get_absolute_url(self):
+        domain = settings.SERVICE_DOMAIN
         return '{domain}/book/{isbn}'.format(domain=domain, isbn=self.isbn)
 
     async def update_from_api(self, book: schemas.KakaoBook):

@@ -1,5 +1,6 @@
-import os
 from .base import *
+
+DEBUG = True
 
 LOGGING = {
     "version": 1,
@@ -36,9 +37,6 @@ DATABASES = {
     }
 }
 
-STATICFILES_DIRS = [
-    os.path.join(DJANGO_ROOT, 'static'),
-]
-
 ALLOWED_HOSTS = ['*', ]
 
+# from tasks import celeryconfig as CELERY_CONFIG

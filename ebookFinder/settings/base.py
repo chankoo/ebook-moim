@@ -5,7 +5,6 @@ from os.path import basename, dirname, join, normpath
 from pathlib import Path
 
 from sys import path
-from django.core.exceptions import ImproperlyConfigured
 
 
 # 경로 설정
@@ -15,10 +14,6 @@ DJANGO_ROOT = str(Path(__file__).resolve().parent.parent)
 SITE_ROOT = dirname(DJANGO_ROOT)
 SITE_NAME = basename(DJANGO_ROOT)
 # 경로 설정 끝
-
-# 디버깅 환경 설정
-DEBUG = True
-# 디버깅 환경 설정 끝
 
 # DB 설정
 ATOMIC_REQUESTS = True
@@ -98,12 +93,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'ebookFinder.urls'
 
-WSGI_APPLICATION = 'ebookFinder.wsgi.application'
-
-
-# Password validation
-# https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -120,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-SERVICE_DOMAIN = 'https://ebookmoim.ml'
+SERVICE_DOMAIN = ''
 
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'

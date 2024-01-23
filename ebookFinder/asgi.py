@@ -1,13 +1,11 @@
 import os
-import json
 
 from django.core.asgi import get_asgi_application
 
-config = {}
-if os.path.isfile("./config.json"):
-    with open("./config.json") as fp:
-        config = json.load(fp)
+def check_local_uname():
+    import platform
+    return 'linuxkit' in platform.uname().release
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', f"settings.{config.get('env', 'local')}")
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.local' if check_local_uname() else 'settings.cloud')
 
 application = get_asgi_application()
