@@ -10,11 +10,21 @@ LOGGING = {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
         },
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': './logs/django/error.log',
+        },
     },
     "loggers": {
         "django.db.backends": {
             "handlers": ["console"],
             "level": "DEBUG",
+        },
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
         },
     },
 }

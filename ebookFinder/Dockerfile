@@ -13,5 +13,3 @@ COPY . /ebook_moim/ebookFinder
 RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8000
-
-RUN mkdir /var/log/gunicorn && touch /var/log/gunicorn/access.log && touch /var/log/gunicorn/error.log

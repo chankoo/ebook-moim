@@ -1,4 +1,6 @@
 from pydantic import ValidationError
+from asgiref.sync import sync_to_async
+import logging
 
 from django.views.generic.base import TemplateView
 from django.http import Http404, HttpResponseBadRequest, HttpResponseServerError
@@ -8,10 +10,10 @@ from django.contrib import messages
 from ebookFinder.apps.book.models import Book
 from ebookFinder.apps.book.services import search_books, get_book_info, get_ebooks_info
 from ebookFinder.apps.book.consts import LOGOS, STORE_NAME_REPR
-from ebookFinder.apps.utils.eb_datetime import tz_now
 from ebookFinder.apps.log.models import SearchHistory
 from ebookFinder.apps.book.schemas import KakaoBook
 from ebookFinder.apps.book.utils import get_valid_isbn
+from ebookFinder.apps.utils.eb_datetime import tz_now
 
 class IndexView(TemplateView):
     template_name = 'book/index.html'
@@ -29,12 +31,13 @@ class BookListView(TemplateView):
         q = request.GET.get('q', '')
         try:
             if request.session.session_key is None:
-                request.session.save()
+                await sync_to_async(request.session.save)()
             session_id = request.session.session_key
             if q:
                 await SearchHistory.objects.acreate(q=q, user_identifier=session_id)
         except Exception as e:
-            pass
+            logger = logging.getLogger('django')
+            logger.error(f"{tz_now().isoformat()} msg:{e} q:{q}")
 
         context['q'] = q
         try:

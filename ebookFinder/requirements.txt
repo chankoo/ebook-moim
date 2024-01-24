@@ -9,9 +9,6 @@ certifi
 chardet
 decorator
 Django
-gevent
-greenlet
-gunicorn
 idna
 importlib-metadata
 ipython
@@ -43,3 +40,4 @@ pytest
 pytest-asyncio
 faker
 pydantic
+asgiref
