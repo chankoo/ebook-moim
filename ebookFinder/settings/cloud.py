@@ -41,6 +41,8 @@ DATABASES = {
 
 ALLOWED_HOSTS = ['*', ]
 
-SERVICE_DOMAIN = 'http://43.200.179.231/'
+SERVICE_DOMAIN = 'http://ebook.chankoo.site/'
+
+SESSION_COOKIE_DOMAIN = '.chankoo.site'
 
 # from tasks import celeryconfig as CELERY_CONFIG

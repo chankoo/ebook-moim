@@ -1,2 +1,2 @@
 # ebookmoim
-https://ebookmoim.ml/
+http://ebook.chankoo.site/
