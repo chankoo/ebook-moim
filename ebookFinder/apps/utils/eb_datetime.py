@@ -1,17 +1,13 @@
-# -*- coding:utf-8 -*-
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
-import datetime
-import pytz
-
-local_tz = pytz.timezone('Asia/Seoul')
-
+local_tz = ZoneInfo('Asia/Seoul')
 
 def set_timezone(data, tz=local_tz):
     if data.tzinfo is None:
-        return tz.localize(data)
+        return data.replace(tzinfo=tz)
     else:
         return data.astimezone(local_tz)
 
-
 def tz_now(tz=local_tz):
-    return set_timezone(datetime.datetime.now(), tz=tz)
+    return set_timezone(datetime.now(), tz=tz)
