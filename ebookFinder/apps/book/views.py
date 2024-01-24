@@ -18,7 +18,7 @@ from ebookFinder.apps.utils.eb_datetime import tz_now
 class IndexView(TemplateView):
     template_name = 'book/index.html'
 
-    def get(self, request, *args, **kwargs):
+    async def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context=context)
 
@@ -56,7 +56,7 @@ class BookListAPIView(TemplateView):
     """
     template_name = 'book/list.html'
 
-    def get(self, request, *args, **kwargs):
+    async def get(self, request, *args, **kwargs):
         context = {}
         return self.render_to_response(context=context)
 

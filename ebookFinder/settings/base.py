@@ -21,14 +21,12 @@ ATOMIC_REQUESTS = True
 
 # Django 기본 설정
 TIME_ZONE = 'Asia/Seoul'
-USE_TZ = True
 
 LANGUAGE_CODE = 'ko-kr'
 
 SITE_ID = 1
 
 USE_I18N = True
-USE_L10N = True
 USE_THOUSAND_SEPARATOR = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # Django 기본 설정 끝
