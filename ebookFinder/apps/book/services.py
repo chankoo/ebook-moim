@@ -40,7 +40,9 @@ async def get_ebooks_info(isbn: str, title: str) -> list[schemas.Ebook]:
         isbns = [isbn]
 
     result = []
-    tasks = [asyncio.create_task(ScrapEbook().get_ebook_info(isbns, title, STORE)) for STORE in BOOK_STORES]
+    tasks = [asyncio.create_task(
+        (ScrapEbookByTitle() if STORE['name'] == 'ridi' else ScrapEbookByISBN()).get_ebook_info(isbns, title, STORE)) for STORE in BOOK_STORES
+    ]
     result = [res for res in await asyncio.gather(*tasks) if res]
     return result
 
@@ -123,7 +125,7 @@ class ScrapEbook(object):
         """
         스토어 상품에서 ebook 정보를 가져옴
         """
-        good = await self.get_valid_good(isbns, title, store)
+        good = await self.get_valid_good(store, isbns=isbns, title=title)
         link_element = await self.get_ebook_link(good, store)
         if not link_element:
             return {}
@@ -131,23 +133,12 @@ class ScrapEbook(object):
         res = await self.get_ebook_detail(link_element, store)
         return res
     
-    async def get_valid_good(self, isbns: list, title:str, store: dict) -> Tag | None:
+    async def get_valid_good(self, store: dict, **kwargs) -> Tag | None:
         """
         스토어 리스트에서 검색 가능한 첫번째 상품 정보를 가져옴
         """
-        base = store['domain'] + store['base']
-        params_list = [{store['param_key']: isbn} for isbn in isbns + [title]]
-        query_list = [urllib.parse.urlencode(params) for params in params_list]
-        url_list = ["?".join([base, query]) for query in query_list]
-
-        tasks = [asyncio.create_task(self.get_good(url, store)) for url in url_list]
-        goods = await asyncio.gather(*tasks)
+        raise NotImplementedError
         
-        while goods:
-            good = goods.pop()
-            if good:
-                break
-        return good
     
     async def get_ebook_link(self, good: Tag | None, store: dict) -> Tag | None:
         """
@@ -218,3 +209,29 @@ class ScrapEbook(object):
         good = BeautifulSoup(f"<li><a href={store['link_format'] % good[store['link_id_name']]}>{good['price']}</li>", 'html.parser')
         return good
     
+
+class ScrapEbookByISBN(ScrapEbook):
+    async def get_valid_good(self, store: dict, isbns: list = None, **kwargs) -> Tag | None:
+        base = store['domain'] + store['base']
+        params_list = [{store['param_key']: isbn} for isbn in isbns]
+        query_list = [urllib.parse.urlencode(params) for params in params_list]
+        url_list = ["?".join([base, query]) for query in query_list]
+
+        tasks = [asyncio.create_task(self.get_good(url, store)) for url in url_list]
+        goods = await asyncio.gather(*tasks)
+        
+        while goods:
+            good = goods.pop()
+            if good:
+                break
+        return good
+
+
+class ScrapEbookByTitle(ScrapEbook):
+    async def get_valid_good(self, store: dict, title: str = '', **kwargs) -> Tag | None:
+        base = store['domain'] + store['base']
+        params = {store['param_key']: title}
+        query = urllib.parse.urlencode(params)
+        url = "?".join([base, query])
+        good = await self.get_good(url, store)
+        return good

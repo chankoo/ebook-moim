@@ -1,7 +1,7 @@
 import pytest
 
 from bs4 import Tag
-from ebookFinder.apps.book.services import ScrapEbook
+from ebookFinder.apps.book.services import ScrapEbook, ScrapEbookByISBN, ScrapEbookByTitle
 from ebookFinder.apps.book.consts import BOOK_STORES
 from ebookFinder.apps.book.schemas import Ebook
 
@@ -11,11 +11,11 @@ ISBN13 = '9791162241639'
 TITLE = '파이썬으로 웹 크롤러 만들기'
 RIDI, YES24, KYOBO, ALADIN = BOOK_STORES
 
-async def run_ebook_info_test(store):
-    scraper = ScrapEbook()
+async def run_ebook_info_test(store: dict, scrap_service: ScrapEbook):
+    scraper = scrap_service()
     isbns = [ISBN10, ISBN13]
 
-    good = await scraper.get_valid_good(isbns, TITLE, store)
+    good = await scraper.get_valid_good(store, isbns=isbns, title=TITLE)
     assert isinstance(good, Tag)
 
     link_element = await scraper.get_ebook_link(good, store)
@@ -26,16 +26,16 @@ async def run_ebook_info_test(store):
 
 @pytest.mark.asyncio
 async def test_get_ebook_info_ridi():
-    await run_ebook_info_test(RIDI)
+    await run_ebook_info_test(RIDI, ScrapEbookByTitle)
 
 @pytest.mark.asyncio
 async def test_get_ebook_info_yes24():
-    await run_ebook_info_test(YES24)
+    await run_ebook_info_test(YES24, ScrapEbookByISBN)
 
 @pytest.mark.asyncio
 async def test_get_ebook_info_kyobo():
-    await run_ebook_info_test(KYOBO)
+    await run_ebook_info_test(KYOBO, ScrapEbookByISBN)
 
 @pytest.mark.asyncio
 async def test_get_ebook_info_aladin():
-    await run_ebook_info_test(ALADIN)
+    await run_ebook_info_test(ALADIN, ScrapEbookByISBN)
