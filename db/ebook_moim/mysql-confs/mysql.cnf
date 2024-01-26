@@ -15,7 +15,8 @@ innodb_buffer_pool_size = 256M
 # sort_buffer_size = 2M
 # read_rnd_buffer_size = 2M
 
-max_connections = 10
+max_connections = 50
+connect_timeout = 20
+wait_timeout = 30
 
-# connect_timeout = 20
 # log-error=/var/log/error.log
