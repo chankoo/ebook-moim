@@ -1,14 +1,15 @@
 import asyncio
-import httpx
 import urllib.parse
 from bs4 import BeautifulSoup, Tag
-import urllib.parse
+import httpx
+import logging
 
 from django.core.exceptions import ObjectDoesNotExist
 
 from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USER_AGENT, \
     BOOK_STORES, AFFILIATE_API_ENDPOINT, AFFILIATE_ID
 from ebookFinder.apps.book import schemas
+from ebookFinder.apps.utils.eb_datetime import tz_now
 
 
 async def search_books(q) -> dict:
@@ -55,12 +56,15 @@ async def get_deeplink(url: str) -> str:
     query = urllib.parse.urlencode(params)
     api_url = AFFILIATE_API_ENDPOINT + "?" + query
 
+    deeplink = ''
     async with httpx.AsyncClient() as client:
-        res = await client.get(api_url)
         try:
-            deeplink = res.json()['url']
-        except Exception:
-            deeplink = None
+            res = await client.get(api_url)
+            if res.status_code == 200:
+                deeplink = res.json()['url']
+        except (httpx.ConnectTimeout, httpx.ReadTimeout) as e:
+            logger = logging.getLogger('django')
+            logger.error(f"{tz_now().isoformat()} msg:{f'{e.__class__} on get_deeplink'} url:{api_url}")
     return deeplink or ''
 
 
@@ -84,7 +88,7 @@ class SearchBookKakao(SearchBook):
         }
         super().__init__(headers)
 
-    async def _get_response(self, params: dict, headers: dict = None, endpoint: str = SEARCH_API_ENDPOINT, **kwargs):
+    async def _get_response(self, params: dict, headers: dict = None, endpoint: str = SEARCH_API_ENDPOINT, **kwargs) -> httpx.Response:
         if headers is None:
             headers = self.headers
         query = urllib.parse.urlencode(params)
@@ -111,10 +115,9 @@ class ScrapEbook(object):
             'User-agent': USER_AGENT,
         }
 
-    async def _get_response(self, url: str, headers: dict = None, **kwargs):
+    async def _get_response(self, url: str, headers: dict = None, **kwargs) -> httpx.Response:
         if headers is None:
             headers = self.headers
-
         async with httpx.AsyncClient() as client:
             res = await client.get(url, headers=headers, **kwargs)
             if res.status_code != 200:
@@ -184,9 +187,12 @@ class ScrapEbook(object):
         """
         스토어 리스트에서 검색하여 첫번째 상품 정보를 가져옴
         """
-        
-        # timeout 으로 인한 cancellation 우회
-        res = await self._get_response(url, timeout=20 if store['name'] == 'aladin' else 10)
+        try:
+            res = await self._get_response(url, timeout=10 if store['name'] == 'aladin' else 5)
+        except (httpx.ConnectTimeout, httpx.ReadTimeout) as e:
+            logger = logging.getLogger('django')
+            logger.error(f"{tz_now().isoformat()} msg:{f'{e.__class__} on get_good'} url:{url}")
+            return None
  
         if 'json' in res.headers['content-type']:
             data = res.json()
