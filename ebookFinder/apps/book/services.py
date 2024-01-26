@@ -3,6 +3,7 @@ import urllib.parse
 from bs4 import BeautifulSoup, Tag
 import httpx
 import logging
+from tenacity import retry, stop_after_attempt, retry_if_exception_type, after_log
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -11,6 +12,7 @@ from ebookFinder.apps.book.consts import KAKAO_API_KEY, SEARCH_API_ENDPOINT, USE
 from ebookFinder.apps.book import schemas
 from ebookFinder.apps.utils.eb_datetime import tz_now
 
+logger = logging.getLogger('django')
 
 async def search_books(q) -> dict:
     kakao = SearchBookKakao()
@@ -63,7 +65,6 @@ async def get_deeplink(url: str) -> str:
             if res.status_code == 200:
                 deeplink = res.json()['url']
         except (httpx.ConnectTimeout, httpx.ReadTimeout) as e:
-            logger = logging.getLogger('django')
             logger.error(f"{tz_now().isoformat()} msg:{f'{e.__class__} on get_deeplink'} url:{api_url}")
     return deeplink or ''
 
@@ -183,14 +184,14 @@ class ScrapEbook(object):
             res['price'] = 0
         return schemas.Ebook(**res)
 
+    @retry(retry=retry_if_exception_type(httpx.ConnectTimeout), stop=stop_after_attempt(2), retry_error_callback=lambda *args:None, reraise=False, after=after_log(logger, logging.ERROR))
     async def get_good(self, url: str, store: dict) -> Tag | None:
         """
         스토어 리스트에서 검색하여 첫번째 상품 정보를 가져옴
         """
         try:
             res = await self._get_response(url, timeout=10 if store['name'] == 'aladin' else 5)
-        except (httpx.ConnectTimeout, httpx.ReadTimeout) as e:
-            logger = logging.getLogger('django')
+        except httpx.ReadTimeout as e:
             logger.error(f"{tz_now().isoformat()} msg:{f'{e.__class__} on get_good'} url:{url}")
             return None
  

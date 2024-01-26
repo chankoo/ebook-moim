@@ -15,6 +15,9 @@ from ebookFinder.apps.book.schemas import KakaoBook
 from ebookFinder.apps.book.utils import get_valid_isbn
 from ebookFinder.apps.utils.eb_datetime import tz_now
 
+logger = logging.getLogger('django')
+
+
 class IndexView(TemplateView):
     template_name = 'book/index.html'
 
@@ -36,7 +39,6 @@ class BookListView(TemplateView):
             if q:
                 await SearchHistory.objects.acreate(q=q, user_identifier=session_id)
         except Exception as e:
-            logger = logging.getLogger('django')
             logger.error(f"{tz_now().isoformat()} msg:{e} q:{q}")
 
         context['q'] = q
