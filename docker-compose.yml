@@ -25,6 +25,7 @@ services:
       - ./ebookFinder:/ebook_moim/ebookFinder
     ports:
       - "8000:8000"
+    init: true
     entrypoint:
       [ "/ebook_moim/ebookFinder/docker-entrypoint.sh" ]
     depends_on:
