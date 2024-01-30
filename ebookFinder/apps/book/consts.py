@@ -24,7 +24,7 @@ BOOK_STORES = [
         'good_selector': '#yesSchList div.itemUnit',
         'param_key': 'query',
         'keyword': 'eBook ',
-        'link_selector': '.relG > a',
+        'link_selector': '.relG:last-of-type > a',
         'logo': '/static/img/logo_yes24.png',
     },
     # {

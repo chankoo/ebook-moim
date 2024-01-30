@@ -24,6 +24,8 @@ async def run_ebook_info_test(store: dict, scrap_service: ScrapEbook):
     detail = await scraper.get_ebook_detail(link_element, store)
     assert isinstance(detail, Ebook)
 
+    assert detail.price >= 0
+
 @pytest.mark.asyncio
 async def test_get_ebook_info_ridi():
     await run_ebook_info_test(RIDI, ScrapEbookByTitle)
