@@ -27,6 +27,8 @@ class Ebook(BaseModel):
     url: HttpUrl
     deeplink: str = ''
     price: int
+    logo: str = ''
+    repr: str = ''
 
     @field_validator("deeplink")
     def validate_deeplink(cls, value):

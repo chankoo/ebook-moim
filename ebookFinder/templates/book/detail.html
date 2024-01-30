@@ -48,13 +48,13 @@
           <hr/>
           <p class="mb-20"><span class="badge badge-success caption-1-bold">업데이트</span> {{ book.date_searched|date:'Y년 m월' }}</p>
           <div class="links-wrapper">
-            {% for ebook in ebooks %}
+            {% for ebook in book.ebooks.all %}
               <a class="link link-block" href="{% if ebook.deeplink %}{{ ebook.deeplink }}{% else %}{{ ebook.url }}{% endif %}" target="_blank">
                 <div class="item-thumnail logo">
-                  <img alt="{{ ebook.repr }}" src="{{ ebook.logo }}" height="64">
+                  <img alt="{{ ebook.get_repr }} 로고" src="{{ ebook.get_logo }}" height="64">
                 </div>
                 <div class="item-info">
-                  <h3 class="body-1-bold info-title m-8-0">{{ ebook.book.title }} - {{ ebook.repr }}</h3>
+                  <h3 class="body-1-bold info-title m-8-0">{{ ebook.book.title }} - {{ ebook.get_repr }}</h3>
                   <span class="caption-1 info-etc">{% if ebook.price %}{{ ebook.price }}원{% endif %}</span>
                 </div>
               </a>

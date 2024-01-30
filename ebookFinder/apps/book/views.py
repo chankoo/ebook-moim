@@ -99,14 +99,5 @@ class BookDetailView(TemplateView):
 
         context = self.get_context_data(**kwargs)
         context['book'] = book
-        ebooks = []
-        lowest_price = None
-        async for ebook in book.ebooks.all():
-            ebook.logo = LOGOS.get(ebook.book_store, '')
-            ebook.repr = STORE_NAME_REPR.get(ebook.book_store, '')
-            if lowest_price is None or 0 < ebook.price < lowest_price:
-                lowest_price = ebook.price
-            ebooks.append(ebook)
-        context['ebooks'] = ebooks
-        context['lowest_price'] = lowest_price
+        context['lowest_price'] = await book.get_lowest_ebook_price()
         return self.render_to_response(context=context)

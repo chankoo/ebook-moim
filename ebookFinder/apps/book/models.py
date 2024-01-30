@@ -7,6 +7,7 @@ from django.db import DataError
 
 from ebookFinder.apps.utils.eb_datetime import tz_now
 from ebookFinder.apps.book import schemas
+from ebookFinder.apps.book.consts import LOGOS, STORE_NAME_REPR
 
 
 class Book(models.Model):
@@ -136,7 +137,14 @@ class Book(models.Model):
         await ebook.asave()
         # Ebook 상품 상세페이지 데이터 비동기로 저장
         # save_ebook_raw.apply_async((info['url'], ebook.id), countdown=1)
-
+    
+    async def get_lowest_ebook_price(self) -> int:
+        """
+        가장 낮은 Ebook 가격
+        """
+        lowest_price = await Ebook.objects.filter(book=self, price__gt=0).order_by('price').values_list('price', flat=True).afirst()
+        return lowest_price or 0
+    
 
 class Ebook(models.Model):
     book = models.ForeignKey(
@@ -182,3 +190,10 @@ class Ebook(models.Model):
 
     def __str__(self):
         return '{}/{}'.format(self.book.title, self.book_store)
+
+    def get_logo(self) -> str:
+        return LOGOS.get(self.book_store, '')
+    
+    def get_repr(self) -> str:
+        return STORE_NAME_REPR.get(self.book_store, '')
+    
