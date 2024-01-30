@@ -76,20 +76,21 @@
   </script>
   <script>
     const getEbooks = async (bookID) => {
+      let ebooks = [];
       try {
         const response = await fetch(`/api/books/${bookID}/ebooks`);
-        const ebooks = await response.json();
-        return ebooks;
+        if (response.status === 200){
+          ebooks = await response.json();
+        }
       } catch (e) {
-        alert(e);
+        ebooks = []
       }
+      return ebooks;
     };
 
     const renderEbooks = async (bookID) => {
-        const ebooks = await getEbooks(bookID);
-        console.log(ebooks)
+        const ebooks = await getEbooks(bookID);        
         const linksWrapper = document.getElementById('linksWrapper');
-
         // Clear existing content
         linksWrapper.innerHTML = '';
 
@@ -117,7 +118,7 @@
 
             const price = document.createElement('span');
             price.className = 'caption-1 info-etc';
-            price.textContent = ebook.price ? `${ebook.price}원` : '';
+            price.textContent = ebook.price ? `${ebook.price.toLocaleString()}원` : '';
 
             info.appendChild(title);
             info.appendChild(price);
