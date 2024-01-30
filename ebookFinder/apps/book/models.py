@@ -191,6 +191,9 @@ class Ebook(models.Model):
     def __str__(self):
         return '{}/{}'.format(self.book.title, self.book_store)
 
+    def get_title(self) -> str:
+        return self.book.title
+    
     def get_logo(self) -> str:
         return LOGOS.get(self.book_store, '')
     

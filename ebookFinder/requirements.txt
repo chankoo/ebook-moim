@@ -42,3 +42,5 @@ faker
 pydantic
 asgiref
 tenacity
+django-ninja
+orjson
