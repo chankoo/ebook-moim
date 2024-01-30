@@ -1,6 +1,7 @@
 from ninja import Router
 from django.core.exceptions import ObjectDoesNotExist
 
+from ebookFinder.apps.book.services import get_ebooks_info
 from ebookFinder.apps.book import models, schemas
 
 router = Router()
@@ -12,7 +13,12 @@ async def get_ebooks(request, book_id: int):
     except ObjectDoesNotExist:
         return []
     
+    if book.need_ebook_update():
+        data = []
+        data = await get_ebooks_info(isbn=book.isbn, title=book.title)
+        await book.update_scrap_data(data=data)
+    
     res = []
     async for ebook in book.ebooks.all():
-        res.append(schemas.Ebook.from_orm(ebook))
+        res.append(schemas.Ebook(**ebook.to_dict()))
     return res

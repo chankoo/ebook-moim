@@ -24,6 +24,7 @@ class Ebook(Schema):
     """
     Ebook 상품의 정보를 담는 모델
     """
+    title: str = ''  # Required in Response
     book_store: str
     url: str
     deeplink: str = ''
@@ -42,3 +43,4 @@ class Ebook(Schema):
         if value != "" and not TypeAdapter(HttpUrl).validate_python(value):
             raise ValueError("Invalid URL")
         return value
+    

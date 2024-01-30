@@ -47,18 +47,8 @@
           <h2 class="subtitle-1-bold">전자책 보러가기</h2>
           <hr/>
           <p class="mb-20"><span class="badge badge-success caption-1-bold">업데이트</span> {{ book.date_searched|date:'Y년 m월' }}</p>
-          <div class="links-wrapper">
-            {% for ebook in book.ebooks.all %}
-              <a class="link link-block" href="{% if ebook.deeplink %}{{ ebook.deeplink }}{% else %}{{ ebook.url }}{% endif %}" target="_blank">
-                <div class="item-thumnail logo">
-                  <img alt="{{ ebook.get_repr }} 로고" src="{{ ebook.get_logo }}" height="64">
-                </div>
-                <div class="item-info">
-                  <h3 class="body-1-bold info-title m-8-0">{{ ebook.book.title }} - {{ ebook.get_repr }}</h3>
-                  <span class="caption-1 info-etc">{% if ebook.price %}{{ ebook.price }}원{% endif %}</span>
-                </div>
-              </a>
-            {% endfor %}
+          <div class="links-wrapper" id="linksWrapper">
+            <div id="loading">Loading...</div>
           </div>
         </div>
         <div class="content-text mt-50">
@@ -83,5 +73,62 @@
       currency: 'KRW',
       content_category: '{{ book.publisher }}',
     });
+  </script>
+  <script>
+    const getEbooks = async (bookID) => {
+      try {
+        const response = await fetch(`/api/books/${bookID}/ebooks`);
+        const ebooks = await response.json();
+        return ebooks;
+      } catch (e) {
+        alert(e);
+      }
+    };
+
+    const renderEbooks = async (bookID) => {
+        const ebooks = await getEbooks(bookID);
+        console.log(ebooks)
+        const linksWrapper = document.getElementById('linksWrapper');
+
+        // Clear existing content
+        linksWrapper.innerHTML = '';
+
+        // Add ebooks to the linksWrapper
+        ebooks.forEach(ebook => {
+            const link = document.createElement('a');
+            link.className = 'link link-block';
+            link.href = ebook.deeplink ? ebook.deeplink : ebook.url;
+            link.target = '_blank';
+
+            const thumbnail = document.createElement('div');
+            thumbnail.className = 'item-thumnail logo';
+            const img = document.createElement('img');
+            img.alt = `${ebook.repr} 로고`;
+            img.src = ebook.logo;
+            img.height = 64;
+            thumbnail.appendChild(img);
+
+            const info = document.createElement('div');
+            info.className = 'item-info';
+
+            const title = document.createElement('h3');
+            title.className = 'body-1-bold info-title m-8-0';
+            title.textContent = `${ebook.title} - ${ebook.repr}`;
+
+            const price = document.createElement('span');
+            price.className = 'caption-1 info-etc';
+            price.textContent = ebook.price ? `${ebook.price}원` : '';
+
+            info.appendChild(title);
+            info.appendChild(price);
+
+            link.appendChild(thumbnail);
+            link.appendChild(info);
+
+            linksWrapper.appendChild(link);
+        });
+    };
+    
+    renderEbooks({{ book.id }});
   </script>
 {% endblock %}

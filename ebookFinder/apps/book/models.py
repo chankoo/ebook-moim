@@ -200,3 +200,13 @@ class Ebook(models.Model):
     def get_repr(self) -> str:
         return STORE_NAME_REPR.get(self.book_store, '')
     
+    def to_dict(self) -> dict:
+        return {
+            'title': self.get_title(),
+            'book_store': self.book_store,
+            'url': self.url,
+            'deeplink': self.deeplink,
+            'price': self.price,
+            'logo': self.get_logo(),
+            'repr': self.get_repr(),
+        }

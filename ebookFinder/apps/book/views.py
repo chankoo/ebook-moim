@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 
 from ebookFinder.apps.book.models import Book
-from ebookFinder.apps.book.services import search_books, get_book_info, get_ebooks_info
+from ebookFinder.apps.book.services import search_books, get_book_info
 from ebookFinder.apps.book.consts import LOGOS, STORE_NAME_REPR
 from ebookFinder.apps.log.models import SearchHistory
 from ebookFinder.apps.book.schemas import KakaoBook
@@ -91,11 +91,6 @@ class BookDetailView(TemplateView):
                 await book.update_from_api(book=kakao_book)
             except Exception as e:
                 raise HttpResponseServerError(e)
-
-        if book.need_ebook_update():
-            data = []
-            data = await get_ebooks_info(isbn=book.isbn, title=book.title)
-            await book.update_scrap_data(data=data)
 
         context = self.get_context_data(**kwargs)
         context['book'] = book
