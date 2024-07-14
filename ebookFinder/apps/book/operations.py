@@ -8,6 +8,7 @@ from tenacity import retry, stop_after_attempt, retry_if_exception_type, after_l
 
 from ebookFinder.core.utils import get_response
 from ebookFinder.apps.utils.eb_datetime import tz_now
+from ebookFinder.apps.book.exceptions import NotMatchingTitleException
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,8 @@ class JsonFromTitleScraper(ScrapOperator):
         query = urllib.parse.urlencode(params)
         url = "?".join([base, query])
         good = await self.get_good(url, store)
+        self.is_valid_title(good, title)
+        good = await self._create_dummy_bs_tag(good, store)
         return good
 
     @retry(
@@ -45,7 +48,7 @@ class JsonFromTitleScraper(ScrapOperator):
         reraise=False,
         after=after_log(logger, logging.ERROR),
     )
-    async def get_good(self, url: str, store: dict) -> Tag | None:
+    async def get_good(self, url: str, store: dict) -> dict | None:
         """
         스토어 리스트에서 검색하여 첫번째 상품 정보를 가져옴
         """
@@ -69,12 +72,10 @@ class JsonFromTitleScraper(ScrapOperator):
             if content[store["good_selector"]]
             else None
         )
-        if good:
-            good = await self.create_dummy_bs_tag(good, store)
         return good
 
     @staticmethod
-    async def create_dummy_bs_tag(good: dict, store: dict) -> Tag:
+    async def _create_dummy_bs_tag(good: dict, store: dict) -> Tag:
         """
         json 형태의 상품 정보를 BeautifulSoup 태그로 변환
         """
@@ -83,6 +84,12 @@ class JsonFromTitleScraper(ScrapOperator):
             "html.parser",
         )
         return good
+
+    def is_valid_title(self, good: dict, expected: str):
+        if not good:
+            return None
+        if "title" in good and good["title"][:5] != expected[:5]:
+            raise NotMatchingTitleException(good["title"])
 
 
 class HtmlFromISBNScraper(ScrapOperator):
