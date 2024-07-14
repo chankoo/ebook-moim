@@ -1,2 +1,0 @@
-class NotJsonResponseException(Exception):
-    pass
