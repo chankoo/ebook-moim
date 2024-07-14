@@ -38,6 +38,7 @@ uvicorn
 httpx
 pytest
 pytest-asyncio
+pytest-django
 faker
 pydantic
 asgiref

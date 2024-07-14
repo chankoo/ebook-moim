@@ -149,13 +149,21 @@ class ScrapEbook(object):
         """
         스토어 상품에서 ebook 정보를 가져옴
         """
-        good = await self.operator.get_valid_good(store, isbns=isbns, title=title)
+        good = await self.get_valid_good(store, isbns=isbns, title=title)
         link_element = await self.get_ebook_link(good, store)
         if not link_element:
             return {}
 
         res = await self.get_ebook_detail(link_element, store)
         return res
+
+    async def get_valid_good(
+        self, store: dict, isbns: list = None, title: str = ""
+    ) -> Tag | None:
+        """
+        스토어 리스트에서 검색 가능한 첫번째 상품 정보를 가져옴
+        """
+        return await self.operator.get_valid_good(store, isbns=isbns, title=title)
 
     async def get_ebook_link(self, good: Tag | None, store: dict) -> Tag | None:
         """
