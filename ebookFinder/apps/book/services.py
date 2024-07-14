@@ -17,6 +17,7 @@ from ebookFinder.apps.book.consts import (
 )
 from ebookFinder.apps.book import schemas
 from ebookFinder.apps.utils.eb_datetime import tz_now
+from ebookFinder.core.exceptions import NotJsonResponseException
 
 logger = logging.getLogger("django")
 
@@ -213,6 +214,25 @@ class ScrapEbook(object):
             res["price"] = 0
         return schemas.Ebook(**res)
 
+
+class ScrapEbookByISBN(ScrapEbook):
+    async def get_valid_good(
+        self, store: dict, isbns: list = None, **kwargs
+    ) -> Tag | None:
+        base = store["domain"] + store["base"]
+        params_list = [{store["param_key"]: isbn} for isbn in isbns]
+        query_list = [urllib.parse.urlencode(params) for params in params_list]
+        url_list = ["?".join([base, query]) for query in query_list]
+
+        tasks = [asyncio.create_task(self.get_good(url, store)) for url in url_list]
+        goods = await asyncio.gather(*tasks)
+
+        while goods:
+            good = goods.pop()
+            if good:
+                break
+        return good
+
     @retry(
         retry=retry_if_exception_type(httpx.ConnectTimeout),
         stop=stop_after_attempt(2),
@@ -234,50 +254,9 @@ class ScrapEbook(object):
             )
             return None
 
-        if "json" in res.headers["content-type"]:
-            # json 반환 api 요청한 경우
-            data = res.json()
-            good = (
-                data[store["good_selector"]][0]
-                if data[store["good_selector"]]
-                else None
-            )
-            if good:
-                good = await self.create_dummy_bs_tag(good, store)
-        else:
-            # html 반환 페이지 요청한 경우
-            soup = BeautifulSoup(res.text, "html.parser")
-            good = soup.select_one(store["good_selector"])
-        return good
-
-    @staticmethod
-    async def create_dummy_bs_tag(good: dict, store: dict) -> Tag:
-        """
-        json 형태의 상품 정보를 BeautifulSoup 태그로 변환
-        """
-        good = BeautifulSoup(
-            f"<li><a href={store['link_format'] % good[store['link_id_name']]}>{good['price']}</li>",
-            "html.parser",
-        )
-        return good
-
-
-class ScrapEbookByISBN(ScrapEbook):
-    async def get_valid_good(
-        self, store: dict, isbns: list = None, **kwargs
-    ) -> Tag | None:
-        base = store["domain"] + store["base"]
-        params_list = [{store["param_key"]: isbn} for isbn in isbns]
-        query_list = [urllib.parse.urlencode(params) for params in params_list]
-        url_list = ["?".join([base, query]) for query in query_list]
-
-        tasks = [asyncio.create_task(self.get_good(url, store)) for url in url_list]
-        goods = await asyncio.gather(*tasks)
-
-        while goods:
-            good = goods.pop()
-            if good:
-                break
+        # html 반환 페이지 요청
+        soup = BeautifulSoup(res.text, "html.parser")
+        good = soup.select_one(store["good_selector"])
         return good
 
 
@@ -290,4 +269,46 @@ class ScrapEbookByTitle(ScrapEbook):
         query = urllib.parse.urlencode(params)
         url = "?".join([base, query])
         good = await self.get_good(url, store)
+        return good
+
+    @retry(
+        retry=retry_if_exception_type(httpx.ConnectTimeout),
+        stop=stop_after_attempt(2),
+        retry_error_callback=lambda *args: None,
+        reraise=False,
+        after=after_log(logger, logging.ERROR),
+    )
+    async def get_good(self, url: str, store: dict) -> Tag | None:
+        """
+        스토어 api를 호출해 첫번째 상품 정보를 가져옴
+        """
+        try:
+            res = await self._get_response(
+                url, timeout=10 if store["name"] == "aladin" else 5
+            )
+        except httpx.ReadTimeout as e:
+            logger.error(
+                f"{tz_now().isoformat()} msg:{f'{e.__class__} on get_good'} url:{url}"
+            )
+            return None
+
+        if "json" not in res.headers["content-type"]:
+            raise NotJsonResponseException
+
+        # json 반환 api 요청
+        data = res.json()
+        good = data[store["good_selector"]][0] if data[store["good_selector"]] else None
+        if good:
+            good = await self.create_dummy_bs_tag(good, store)
+        return good
+
+    @staticmethod
+    async def create_dummy_bs_tag(good: dict, store: dict) -> Tag:
+        """
+        json 형태의 상품 정보를 BeautifulSoup 태그로 변환
+        """
+        good = BeautifulSoup(
+            f"<li><a href={store['link_format'] % good[store['link_id_name']]}>{good['price']}</li>",
+            "html.parser",
+        )
         return good

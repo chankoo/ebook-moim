@@ -1,0 +1,2 @@
+class NotMatchingTitleException(Exception):
+    pass
