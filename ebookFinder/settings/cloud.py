@@ -3,20 +3,20 @@ from .base import *
 DEBUG = False
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': './logs/django/error.log',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": "./logs/django/error.log",
         },
     },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'ERROR',
-            'propagate': True,
+    "loggers": {
+        "django": {
+            "handlers": ["file"],
+            "level": "ERROR",
+            "propagate": True,
         },
     },
 }
@@ -33,16 +33,16 @@ DATABASES = {
         "PASSWORD": "root",
         "HOST": "mysql-ebook-moim",
         "PORT": "3306",
-        "OPTIONS": {
-            "isolation_level": "READ COMMITTED"
-        }
+        "OPTIONS": {"isolation_level": "READ COMMITTED"},
     }
 }
 
-ALLOWED_HOSTS = ['*', ]
+ALLOWED_HOSTS = [
+    "*",
+]
 
-SERVICE_DOMAIN = 'http://ebook.chankoo.site'
+SERVICE_DOMAIN = "http://ebook.chankoo.site"
 
-SESSION_COOKIE_DOMAIN = '.chankoo.site'
+SESSION_COOKIE_DOMAIN = ".chankoo.site"
 
 # from tasks import celeryconfig as CELERY_CONFIG

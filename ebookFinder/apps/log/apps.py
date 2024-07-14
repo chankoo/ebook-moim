@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class LogConfig(AppConfig):
-    name = 'ebookFinder.apps.log'
+    name = "ebookFinder.apps.log"
