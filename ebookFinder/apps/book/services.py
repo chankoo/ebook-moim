@@ -236,18 +236,26 @@ class ScrapEbook(object):
 
         if "json" in res.headers["content-type"]:
             # json 반환 api 요청한 경우
-            data = res.json()
-            good = (
-                data[store["good_selector"]][0]
-                if data[store["good_selector"]]
-                else None
-            )
-            if good:
-                good = await self.create_dummy_bs_tag(good, store)
+            good = await self._get_good_from_json(content=res.json(), store=store)
+
         else:
             # html 반환 페이지 요청한 경우
-            soup = BeautifulSoup(res.text, "html.parser")
-            good = soup.select_one(store["good_selector"])
+            good = await self._get_good_from_html(content=res.text, store=store)
+        return good
+
+    async def _get_good_from_json(self, content: dict, store: dict) -> Tag | None:
+        good = (
+            content[store["good_selector"]][0]
+            if content[store["good_selector"]]
+            else None
+        )
+        if good:
+            good = await self.create_dummy_bs_tag(good, store)
+        return good
+
+    async def _get_good_from_html(self, content: str, store: dict) -> Tag | None:
+        soup = BeautifulSoup(content, "html.parser")
+        good = soup.select_one(store["good_selector"])
         return good
 
     @staticmethod
