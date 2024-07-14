@@ -17,6 +17,20 @@ BOOK_STORES = [
         "link_id_name": "b_id",
     },
     {
+        "name": "millie",
+        "name_repr": "MILLIE",
+        "domain": "https://live-api.millie.co.kr",
+        "base": "/v3/search/content",
+        "good_selector": "RESP_DATA",
+        "good_selector2": "list",
+        "param_key": "keyword",
+        "keyword": "",
+        "logo": "/static/img/logo_millie.png",
+        "link_format": "https://www.millie.co.kr/v3/bookDetail/%s",
+        "link_id_name": "book_id",
+        # param setting 필요 ?debug=1&filter[condition]=published&limitCount=10&category=&searchType=total&contentCode=245&orderBy=accuracy&keyword=%EB%B6%95%EA%B4%B4%EA%B0%80&startPage=1
+    },
+    {
         "name": "yes24",
         "name_repr": "YES24",
         "domain": "https://www.yes24.com",
@@ -58,6 +72,7 @@ BOOK_STORES = [
 
 LOGOS = {
     "ridi": "/static/img/logo_ridi.png",
+    "millie": "/static/img/logo_millie.png",
     "yes24": "/static/img/logo_yes24.png",
     "interpark": "/static/img/logo_interpark.jpg",
     "kyobobook": "/static/img/logo_kyobobook.png",
@@ -66,6 +81,7 @@ LOGOS = {
 
 STORE_NAME_REPR = {
     "ridi": "리디",
+    "millie": "밀리의 서재",
     "yes24": "YES24",
     "interpark": "인터파크 도서",
     "kyobobook": "교보문고",

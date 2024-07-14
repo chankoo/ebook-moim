@@ -58,7 +58,7 @@ async def get_ebooks_info(isbn: str, title: str) -> list[schemas.Ebook]:
         asyncio.create_task(
             (
                 ScrapEbook(operator=JsonFromTitleScraper())
-                if STORE["name"] == "ridi"
+                if STORE["name"] in ["ridi", "millie"]
                 else ScrapEbook(operator=HtmlFromISBNScraper())
             ).get_ebook_info(isbns, title, STORE)
         )

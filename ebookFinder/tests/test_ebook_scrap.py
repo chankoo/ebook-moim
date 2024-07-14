@@ -9,15 +9,14 @@ from ebookFinder.apps.book.schemas import Ebook
 from ebookFinder.apps.book.operations import JsonFromTitleScraper, HtmlFromISBNScraper
 from ebookFinder.apps.book.exceptions import NotMatchingTitleException
 
-ISBN = "1162241632-9791162241639"
-ISBN10 = "1162241632"
-ISBN13 = "9791162241639"
-TITLE = "파이썬으로 웹 크롤러 만들기"
-RIDI, YES24, KYOBO, ALADIN = BOOK_STORES
+ISBN = "8901235153-9788901235158"
+ISBN10 = "8901235153"
+ISBN13 = "9788901235158"
+TITLE = "희망 버리기 기술"
+RIDI, MILLIE, YES24, KYOBO, ALADIN = BOOK_STORES
 
 
 async def run_ebook_info_test(store: dict, scraper: ScrapEbook):
-
     isbns = [ISBN10, ISBN13]
 
     good = await scraper.get_valid_good(store, isbns=isbns, title=TITLE)
@@ -35,6 +34,11 @@ async def run_ebook_info_test(store: dict, scraper: ScrapEbook):
 @pytest.mark.asyncio
 async def test_get_ebook_info_ridi():
     await run_ebook_info_test(RIDI, ScrapEbook(operator=JsonFromTitleScraper()))
+
+
+@pytest.mark.asyncio
+async def test_get_ebook_info_millie():
+    await run_ebook_info_test(MILLIE, ScrapEbook(operator=JsonFromTitleScraper()))
 
 
 @pytest.mark.asyncio

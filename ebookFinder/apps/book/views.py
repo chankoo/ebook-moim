@@ -9,7 +9,6 @@ from django.contrib import messages
 
 from ebookFinder.apps.book.models import Book
 from ebookFinder.apps.book.services import search_books, get_book_info
-from ebookFinder.apps.book.consts import LOGOS, STORE_NAME_REPR
 from ebookFinder.apps.log.models import SearchHistory
 from ebookFinder.apps.book.schemas import KakaoBook
 from ebookFinder.apps.book.utils import get_valid_isbn

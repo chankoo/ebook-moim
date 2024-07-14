@@ -37,8 +37,10 @@ class JsonFromTitleScraper(ScrapOperator):
         query = urllib.parse.urlencode(params)
         url = "?".join([base, query])
         good = await self.get_good(url, store)
-        self.is_valid_title(good, title)
-        good = await self._create_dummy_bs_tag(good, store)
+
+        if good:
+            self.is_valid_title(good, title)
+            good = await self._create_dummy_bs_tag(good, store)
         return good
 
     @retry(
@@ -67,12 +69,20 @@ class JsonFromTitleScraper(ScrapOperator):
         return await self._get_good_from_json(content=res.json(), store=store)
 
     async def _get_good_from_json(self, content: dict, store: dict) -> Tag | None:
-        good = (
-            content[store["good_selector"]][0]
-            if content[store["good_selector"]]
-            else None
-        )
+        good_list = self._get_good_list(content, store)
+        good = good_list[0] if good_list else None
         return good
+
+    def _get_good_list(self, content: dict, store: dict) -> list:
+        selected = content[store["good_selector"]]
+        if not selected:
+            return []
+
+        if isinstance(selected, list):
+            return selected
+        elif isinstance(selected, dict):
+            return selected[store["good_selector2"]]
+        raise Exception("Invalid good_selector")
 
     @staticmethod
     async def _create_dummy_bs_tag(good: dict, store: dict) -> Tag:
@@ -80,14 +90,12 @@ class JsonFromTitleScraper(ScrapOperator):
         json 형태의 상품 정보를 BeautifulSoup 태그로 변환
         """
         good = BeautifulSoup(
-            f"<li><a href={store['link_format'] % good[store['link_id_name']]}>{good['price']}</li>",
+            f"<li><a href={store['link_format'] % good[store['link_id_name']]}>{good.get('price', '')}</li>",
             "html.parser",
         )
         return good
 
     def is_valid_title(self, good: dict, expected: str):
-        if not good:
-            return None
         if "title" in good and good["title"][:5] != expected[:5]:
             raise NotMatchingTitleException(good["title"])
 
