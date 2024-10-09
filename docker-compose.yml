@@ -5,12 +5,13 @@ services:
     build:
       context: ./db/ebook_moim/
     container_name: mysql-ebook-moim
+    restart: always
     ports:
       - '3306:3306'
     volumes:
       - mysql-ebook-moim-storage:/var/lib/mysql
       - ./db/ebook_moim/mysql-confs/:/etc/mysql/conf.d/
-      # - ./db/ebook_moim/logs:/var/log/
+      - ./db/ebook_moim/logs:/var/log/mysql
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-proot"]
       interval: 5s
@@ -21,6 +22,7 @@ services:
     build:
       context: ./ebookFinder/
     container_name: ebook-moim
+    restart: on-failure
     volumes:
       - ./ebookFinder:/ebook_moim/ebookFinder
     ports:
@@ -34,11 +36,13 @@ services:
   redis-ebook-moim:
     image: redis:latest
     container_name: redis-ebook-moim
+    restart: always
     ports:
       - '6379:6379'
   nginx-ebook-moim:
     image: nginx:latest
     container_name: nginx-ebook-moim
+    restart: always
     ports:
       - '80:80'
     volumes:

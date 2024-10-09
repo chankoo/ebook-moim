@@ -19,4 +19,4 @@ max_connections = 50
 connect_timeout = 20
 wait_timeout = 30
 
-# log-error=/var/log/error.log
+log-error=/var/log/mysql/error.log
