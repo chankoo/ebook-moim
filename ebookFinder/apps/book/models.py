@@ -11,17 +11,17 @@ from ebookFinder.apps.book.consts import LOGOS, STORE_NAME_REPR
 
 
 class Book(models.Model):
-    title = models.CharField(max_length=50, default="")
+    title = models.CharField(max_length=300, default="")
 
     isbn = models.CharField(max_length=30, default="")
 
-    publisher = models.CharField(max_length=30, default="")
+    publisher = models.CharField(max_length=300, default="")
 
-    authors = models.CharField(max_length=100, default="")
+    authors = models.CharField(max_length=300, default="")
 
     date_publish = models.DateField(null=True, blank=True)
 
-    translators = models.CharField(max_length=100, default="")
+    translators = models.CharField(max_length=300, default="")
 
     price = models.IntegerField(null=True, blank=True)
 
@@ -116,7 +116,7 @@ class Ebook(models.Model):
         "Book", on_delete=models.CASCADE, related_name="ebooks", null=True, blank=True
     )
 
-    book_store = models.CharField(max_length=20, default="")
+    book_store = models.CharField(max_length=100, default="")
 
     url = models.CharField(max_length=500, default="")
 
