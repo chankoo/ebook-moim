@@ -259,3 +259,6 @@ local_database.conf
 
 # config
 secret_key.*
+
+
+.vscode/

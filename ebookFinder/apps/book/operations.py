@@ -60,7 +60,7 @@ class JsonFromTitleScraper(ScrapOperator):
                 headers=self.headers,
                 timeout=10 if store["name"] == "aladin" else 5,
             )
-        except httpx.ReadTimeout as e:
+        except httpx.HTTPError as e:
             logger.error(
                 f"{tz_now().isoformat()} msg:{f'{e.__class__} on get_good'} url:{url}"
             )
@@ -135,7 +135,7 @@ class HtmlFromISBNScraper(ScrapOperator):
                 headers=self.headers,
                 timeout=10 if store["name"] == "aladin" else 5,
             )
-        except httpx.ReadTimeout as e:
+        except httpx.HTTPError as e:
             logger.error(
                 f"{tz_now().isoformat()} msg:{f'{e.__class__} on get_good'} url:{url}"
             )
