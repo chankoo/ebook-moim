@@ -51,14 +51,17 @@ class InstagramCallbackView(APIView):
             )
 
 
-@login_required
 def quit(request):
     """
     사용자 데이터 삭제 안내 및 실제 삭제 처리
     """
-    if request.method == "POST":
-        user = request.user
-        user.delete()
-        messages.success(request, "계정이 완전히 삭제되었습니다.")
-        return redirect("book:index")  # 메인 페이지 등으로 리다이렉트
-    return render(request, "quit.html")
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            user = request.user
+            user.delete()
+            messages.success(request, "계정이 완전히 삭제되었습니다.")
+            return redirect("book:index")  # 메인 페이지 등으로 리다이렉트
+        return render(request, "quit.html")
+    else:
+        # 비로그인 사용자는 안내만 보여줌
+        return render(request, "quit.html", {"not_authenticated": True})

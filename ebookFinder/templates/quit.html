@@ -1,14 +1,14 @@
 {% extends "base.html" %}
-{% block content %}
-<h1>사용자 데이터 삭제 안내</h1>
-{% if user.is_authenticated %}
+{% block layout %}
+  <h1>사용자 데이터 삭제 안내</h1>
+{% if not_authenticated %}
+  <p>로그인 후 계정 삭제가 가능합니다.</p>
+{% else %}
   <p>아래 버튼을 누르면 계정 및 모든 데이터가 즉시 삭제됩니다.<br>
   <strong>이 작업은 되돌릴 수 없습니다!</strong></p>
   <form method="post">
     {% csrf_token %}
     <button type="submit" class="btn btn-danger">계정 완전 삭제</button>
   </form>
-{% else %}
-  <p>로그인 후 계정 삭제가 가능합니다.</p>
 {% endif %}
 {% endblock %} 
