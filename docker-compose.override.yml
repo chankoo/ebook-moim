@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  nginx-ebook-moim:
+    volumes:
+      - ./nginx/nginx.conf.dev:/etc/nginx/nginx.conf
+      - ./nginx/dev:/etc/letsencrypt
+      - ./ebookFinder/staticfiles:/ebook_moim/ebookFinder/staticfiles
+      - ./nginx/logs:/var/log/nginx
