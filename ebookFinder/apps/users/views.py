@@ -1,4 +1,6 @@
-from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.views import View
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -47,3 +49,16 @@ class InstagramCallbackView(APIView):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+@login_required
+def quit(request):
+    """
+    사용자 데이터 삭제 안내 및 실제 삭제 처리
+    """
+    if request.method == "POST":
+        user = request.user
+        user.delete()
+        messages.success(request, "계정이 완전히 삭제되었습니다.")
+        return redirect("book:index")  # 메인 페이지 등으로 리다이렉트
+    return render(request, "quit.html")
