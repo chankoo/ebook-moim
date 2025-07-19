@@ -1,51 +1,53 @@
 {% extends "base.html" %}
 {% load i18n static %}
 {% block layout %}
-  {% block header %}
-    <header class="header">
-      <section class="base-nav">
-        <div class="container-1280 p-16">
-          <nav class="d-flex align-items-center ">
-            <a class="nav-logo-wrapper gnb-menu mr-50 title-1" href="/book/">이북모임?!
-            </a>
-            <div class="searchbox-wrapper">
-              <form method="get" action="/book/list">
-                <div class="form-group d-flex align-items-center">
-                  <label class="mr-10">
-                    <i class="fas fa-search fa-lg"></i>
-                  </label>
-                  <input class="form-control-lg" type="text" name="q"/>
-                </div>
-              </form>
-            </div>
+  <body style="min-height:100vh;display:flex;flex-direction:column;">
+    {% block header %}
+      <header class="header" style="flex-shrink:0;">
+        <section class="base-nav">
+          <div class="container-1280 p-16">
+            <nav class="d-flex align-items-center ">
+              <a class="nav-logo-wrapper gnb-menu mr-50 title-1" href="/book/">이북모임?!
+              </a>
+              <div class="searchbox-wrapper">
+                <form method="get" action="/book/list">
+                  <div class="form-group d-flex align-items-center">
+                    <label class="mr-10">
+                      <i class="fas fa-search fa-lg"></i>
+                    </label>
+                    <input class="form-control-lg" type="text" name="q"/>
+                  </div>
+                </form>
+              </div>
 {#            <div class="left-nav push hide">#}
 {#              <a href="" class="gnb-menu body-2">GNB1</a>#}
 {#              <a href="" class="gnb-menu body-2">GNB2</a>#}
 {#            </div>#}
-            <div class="right-nav push">
-              <div class="right-nav-list">
-                <a class="right-nav-item body-2" href="{% url 'users:instagram_login' %}">
-                  <i class="fab fa-instagram"></i> Instagram Login
-                </a>
+              <div class="right-nav push">
+                <div class="right-nav-list">
+                  <a class="right-nav-item body-2" href="{% url 'users:instagram_login' %}">
+                    <i class="fab fa-instagram"></i> Instagram Login
+                  </a>
+                </div>
               </div>
-            </div>
-          </nav>
-        </div>
-      </section>
-    </header>
-  {% endblock %}
-
-  {% block message %}
-{#    {% include "partials/alert_messages.html" %}#}
-  {% endblock message %}
-
-  <div class="gaia">
-    {% block content_wrapper %}
-      {# 컨텐츠 영역 #}
+            </nav>
+          </div>
+        </section>
+      </header>
     {% endblock %}
-  </div>
-  {% block page_tooltip %}{% endblock %}
-  {% block footer_remover %}{% endblock %}
+
+    {% block message %}
+{#    {% include "partials/alert_messages.html" %}#}
+    {% endblock message %}
+
+    <div class="gaia" style="flex:1 0 auto;min-height:400px;">
+      {% block content_wrapper %}
+        {# 컨텐츠 영역 #}
+      {% endblock %}
+    </div>
+    {% block page_tooltip %}{% endblock %}
+    {% block footer_remover %}{% endblock %}
+  </body>
 {% endblock %}
 
 {% block extrascripts %}
