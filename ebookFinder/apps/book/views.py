@@ -99,3 +99,7 @@ class BookDetailView(TemplateView):
         context["book"] = book
         context["lowest_price"] = await book.get_lowest_ebook_price()
         return self.render_to_response(context=context)
+
+
+class PrivacyPolicyView(TemplateView):
+    template_name = "privacy_policy.html"
