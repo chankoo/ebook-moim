@@ -23,7 +23,25 @@ http {
 
     server {
         listen 80;
-        server_name localhost;
+        server_name chankoo.shop www.chankoo.shop ebook.chankoo.shop;
+
+        location /.well-known/acme-challenge/ {
+            root /var/www/certbot;
+        }
+
+        location / {
+            return 301 https://$host$request_uri;
+        }
+    }
+
+    server {
+        listen 443 ssl;
+        server_name chankoo.shop www.chankoo.shop;
+
+        ssl_certificate     /etc/letsencrypt/live/chankoo.shop/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/chankoo.shop/privkey.pem;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers HIGH:!aNULL:!MD5;
 
         location / {
             proxy_pass http://ebook-moim:8000;
