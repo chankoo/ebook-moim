@@ -76,9 +76,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
+    "rest_framework_simplejwt",
     "apps.book",
     "apps.log",
+    "apps.users",
 ]
+
+AUTH_USER_MODEL = "users.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -112,3 +117,16 @@ SERVICE_DOMAIN = ""
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+
+# Instagram OAuth2 settings
+INSTAGRAM_CLIENT_ID = "1950225982466334"
+INSTAGRAM_CLIENT_SECRET = "YOUR_INSTAGRAM_CLIENT_SECRET"
+INSTAGRAM_REDIRECT_URI = "YOUR_INSTAGRAM_REDIRECT_URI"
+
+# Django Rest Framework
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    )
+}

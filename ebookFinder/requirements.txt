@@ -45,3 +45,5 @@ asgiref
 tenacity
 django-ninja
 orjson
+djangorestframework
+djangorestframework-simplejwt
