@@ -122,7 +122,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Instagram OAuth2 settings
 INSTAGRAM_CLIENT_ID = "1950225982466334"
 INSTAGRAM_CLIENT_SECRET = "c16073005c0e9e95dcc85211b15e95f0"
-INSTAGRAM_REDIRECT_URI = "https://chankoo.shop/instagram/callback"
+INSTAGRAM_REDIRECT_URI = "https://chankoo.shop/instagram/callback/"
 
 # Django Rest Framework
 REST_FRAMEWORK = {
