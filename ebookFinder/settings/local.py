@@ -50,3 +50,8 @@ ALLOWED_HOSTS = [
 ]
 
 # from tasks import celeryconfig as CELERY_CONFIG
+
+# Google OAuth2
+GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID"
+GOOGLE_CLIENT_SECRET = "YOUR_GOOGLE_CLIENT_SECRET"
+GOOGLE_REDIRECT_URI = "http://127.0.0.1:8000/users/google/callback/"

@@ -13,4 +13,10 @@ urlpatterns = [
         name="instagram_callback",
     ),
     path("me/quit/", views.quit, name="quit"),
+    path("google/login/", views.GoogleLoginRedirectView.as_view(), name="google_login"),
+    path(
+        "google/callback/",
+        views.GoogleCallbackView.as_view(),
+        name="google_callback",
+    ),
 ]
